@@ -18,6 +18,9 @@
 #ifndef __OpcUaDB_Connection_h__
 #define __OpcUaDB_Connection_h__
 
+#include <sql.h>
+#include <sqlext.h>
+
 namespace OpcUaDB
 {
 
@@ -31,6 +34,8 @@ namespace OpcUaDB
 		bool disconnect(void);
 
 	  private:
+	    SQLHENV env_;
+	    SQLHDBC dbc_;
 	};
 
 }
