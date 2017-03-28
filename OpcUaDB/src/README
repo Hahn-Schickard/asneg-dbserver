@@ -1,0 +1,5 @@
+
+Installation ODBC:
+==================
+
+sudo apt-get install libmyodbc unixodbc-bin unixodbc-dev
