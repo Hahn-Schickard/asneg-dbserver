@@ -20,6 +20,7 @@
 
 #include <sql.h>
 #include <sqlext.h>
+#include <iostream>
 
 namespace OpcUaDB
 {
@@ -34,8 +35,11 @@ namespace OpcUaDB
 		bool disconnect(void);
 
 	  private:
+		void logError(const std::string& message);
+
 	    SQLHENV env_;
 	    SQLHDBC dbc_;
+	    HSTMT hstmt_;
 	};
 
 }
