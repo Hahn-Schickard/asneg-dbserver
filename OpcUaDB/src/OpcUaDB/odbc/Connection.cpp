@@ -92,7 +92,6 @@ namespace OpcUaDB
 	void
 	Connection::logError(const std::string& message)
 	{
-
 		if (!hstmt_) {
 			Log(Error, message);
 			return;
