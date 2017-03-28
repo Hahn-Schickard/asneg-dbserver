@@ -27,6 +27,7 @@ namespace OpcUaDB
 	Connection::Connection(void)
 	: env_()
 	, dbc_()
+	, hstmt_()
 	{
 	}
 
