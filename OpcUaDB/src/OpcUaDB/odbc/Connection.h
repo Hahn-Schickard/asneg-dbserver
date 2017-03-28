@@ -27,6 +27,9 @@ namespace OpcUaDB
 		Connection(void);
 		~Connection(void);
 
+		bool connect(void);
+		bool disconnect(void);
+
 	  private:
 	};
 
