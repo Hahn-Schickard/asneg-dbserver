@@ -1,0 +1,19 @@
+###########################
+# UaModeler Project File  #
+# Generated at 09.04.2017 #
+###########################
+
+PROJECTNAME = DBServer
+
+TEMPLATESET = ($TEMPLATES)/modeling/v1_0/t0/modeling.tt2set
+
+MODELS += ($MODELS)/Opc.Ua.NodeSet2.ua \
+    dbserver.ua
+
+COLORS = ($MODELS)/Opc.Ua.NodeSet2.ua: #0000ff\
+    dbserver.ua: #008000
+
+OUTPUTPATH = 
+
+GENERATE += dbserver.ua
+
