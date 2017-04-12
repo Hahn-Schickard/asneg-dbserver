@@ -95,6 +95,7 @@
   
   <InformationModel>
     <NodeSetFile>@CONF_DIR@/Opc.Ua.NodeSet.xml</NodeSetFile>
+    <NodeSetFile>@CONF_DIR@/Opc.Ua.DB.NodeSet.xml</NodeSetFile>
   </InformationModel>
 
 </OpcUaServer>

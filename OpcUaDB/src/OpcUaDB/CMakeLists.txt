@@ -71,6 +71,7 @@ install(TARGETS OpcUaDB DESTINATION /usr/lib)
 
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaDB/Config/OpcUaServer.xml DESTINATION /etc/OpcUaStack/OpcUaDB) 
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaDB/Config/Opc.Ua.NodeSet.xml DESTINATION /etc/OpcUaStack/OpcUaDB)
+install(FILES ${PROJECT_SOURCE_DIR}/OpcUaDB/Config/Opc.Ua.DB.NodeSet.xml DESTINATION /etc/OpcUaStack/OpcUaDB)
 install(FILES ${PROJECT_SOURCE_DIR}/OpcUaDB/linux/log/README DESTINATION /var/log/OpcUaStack/OpcUaDB)
 install(DIRECTORY DESTINATION /var/log/OpcUaStack/OpcUaDB)
 
