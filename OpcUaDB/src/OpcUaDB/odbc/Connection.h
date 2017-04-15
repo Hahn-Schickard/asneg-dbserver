@@ -36,6 +36,7 @@ namespace OpcUaDB
 
 		bool connect(void);
 		bool disconnect(void);
+		bool execDirect(const std::string& statement);
 
 	  private:
 		void logError(const std::string& message);

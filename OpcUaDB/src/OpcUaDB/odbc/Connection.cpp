@@ -120,6 +120,35 @@ namespace OpcUaDB
 		return true;
 	}
 
+	bool
+	Connection::execDirect(const std::string& statement)
+	{
+		SQLRETURN ret;
+
+		// check
+		if (dbc_ == nullptr) return false;
+
+		// allocate sql statement handle
+		SQLHANDLE stmt;
+		ret = SQLAllocHandle(SQL_HANDLE_STMT, dbc_, &stmt);
+		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
+			logError("execDirect - SQLAllocHandle error");
+			cleanup();
+			return false;
+		}
+
+		// execute sql satement
+		ret = SQLExecDirect(stmt, (SQLCHAR*)statement.c_str(), SQL_NTS);
+		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
+			SQLFreeHandle(SQL_HANDLE_STMT, stmt);
+			logError("execDirect - SQLExecDirect error");
+			cleanup();
+			return false;
+		}
+
+		return true;
+	}
+
 	void
 	Connection::logError(const std::string& message)
 	{
