@@ -31,6 +31,9 @@ namespace OpcUaDB
 		Connection(void);
 		~Connection(void);
 
+		bool init(void);
+		bool cleanup(void);
+
 		bool connect(void);
 		bool disconnect(void);
 

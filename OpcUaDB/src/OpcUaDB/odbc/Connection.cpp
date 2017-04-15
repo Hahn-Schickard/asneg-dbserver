@@ -25,14 +25,62 @@ namespace OpcUaDB
 {
 
 	Connection::Connection(void)
-	: env_()
-	, dbc_()
-	, hstmt_()
+	: env_(nullptr)
+	, dbc_(nullptr)
+	, hstmt_(nullptr)
 	{
 	}
 
 	Connection::~Connection(void)
 	{
+		cleanup();
+	}
+
+	bool
+	Connection::init(void)
+	{
+		SQLRETURN ret;
+
+		// allocate environment
+		ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &env_);
+		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
+			logError("init - SQLAllocHandle error");
+			cleanup();
+			return false;
+		}
+
+		// ODBC: Version: Set
+		ret = SQLSetEnvAttr(env_, SQL_ATTR_ODBC_VERSION, (void*)SQL_OV_ODBC3, 0);
+		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
+			logError("init - SQLSetEnvAttr error");
+			cleanup();
+			return false;
+		}
+
+		// DBC: Allocate
+		ret = SQLAllocHandle(SQL_HANDLE_DBC, env_, &dbc_);
+		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
+			logError("init - SQLAllocHandle error");
+			cleanup();
+			return false;
+		}
+
+		return true;
+	}
+
+	bool
+	Connection::cleanup(void)
+	{
+		if (dbc_ != nullptr) {
+			SQLDisconnect(dbc_);
+		    SQLFreeHandle(SQL_HANDLE_DBC, dbc_);
+		    dbc_ = nullptr;
+		}
+		if (env_ != nullptr) {
+			SQLFreeHandle(SQL_HANDLE_ENV, env_);
+			env_ = nullptr;
+		}
+		return true;
 	}
 
 	bool
@@ -40,27 +88,12 @@ namespace OpcUaDB
 	{
 		SQLRETURN ret;
 
-		// allocate environment
-		ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &env_);
-		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
-			logError("connect - SQLAllocHandle error");
-			return false;
-		}
-
-		// ODBC: Version: Set
-		ret = SQLSetEnvAttr(env_, SQL_ATTR_ODBC_VERSION, (void*)SQL_OV_ODBC3, 0);
-		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
-			logError("connect - SQLSetEnvAttr error");
-			SQLFreeHandle(SQL_HANDLE_ENV, env_);
-			return false;
-		}
-
-		// DBC: Allocate
-		ret = SQLAllocHandle(SQL_HANDLE_DBC, env_, &dbc_);
-		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
-			logError("connect - SQLAllocHandle error");
-			SQLFreeHandle(SQL_HANDLE_ENV, env_);
-			return false;
+		// init
+		if (dbc_ == nullptr) {
+			if (!init()) {
+				cleanup();
+				return false;
+			}
 		}
 
 	    // DBC: Connect
@@ -72,8 +105,7 @@ namespace OpcUaDB
 		);
 		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
 			logError("connect - SQLConnect error");
-			SQLFreeHandle(SQL_HANDLE_ENV, env_);
-			SQLFreeHandle(SQL_HANDLE_DBC, dbc_);
+			cleanup();
 			return false;
 		}
 
@@ -85,8 +117,6 @@ namespace OpcUaDB
 	{
 		// disconnect from database
 	    SQLDisconnect(dbc_);
-	    SQLFreeHandle(SQL_HANDLE_DBC, dbc_);
-	    SQLFreeHandle(SQL_HANDLE_ENV, env_);
 		return true;
 	}
 
