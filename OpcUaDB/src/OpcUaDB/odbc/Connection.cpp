@@ -44,7 +44,7 @@ namespace OpcUaDB
 		// allocate environment
 		ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &env_);
 		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
-			logError("init - SQLAllocHandle error");
+			logError("init - SQLAllocHandle error", SQL_HANDLE_ENV);
 			cleanup();
 			return false;
 		}
@@ -52,7 +52,7 @@ namespace OpcUaDB
 		// ODBC: Version: Set
 		ret = SQLSetEnvAttr(env_, SQL_ATTR_ODBC_VERSION, (void*)SQL_OV_ODBC3, 0);
 		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
-			logError("init - SQLSetEnvAttr error");
+			logError("init - SQLSetEnvAttr error", SQL_HANDLE_ENV);
 			cleanup();
 			return false;
 		}
@@ -60,7 +60,7 @@ namespace OpcUaDB
 		// DBC: Allocate
 		ret = SQLAllocHandle(SQL_HANDLE_DBC, env_, &dbc_);
 		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
-			logError("init - SQLAllocHandle error");
+			logError("init - SQLAllocHandle error", SQL_HANDLE_DBC);
 			cleanup();
 			return false;
 		}
@@ -106,7 +106,7 @@ namespace OpcUaDB
 		);
 		std::cout << "OK2" << std::endl;
 		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
-			logError("connect - SQLConnect error");
+			logError("connect - SQLConnect error", SQL_HANDLE_DBC);
 			cleanup();
 			return false;
 		}
@@ -132,25 +132,25 @@ namespace OpcUaDB
 		if (dbc_ == nullptr) return false;
 
 		// allocate sql statement handle
-		SQLHANDLE stmt;
-		ret = SQLAllocHandle(SQL_HANDLE_STMT, dbc_, &stmt);
+		ret = SQLAllocHandle(SQL_HANDLE_STMT, dbc_, &stmt_);
 		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
-			logError("execDirect - SQLAllocHandle error");
+			logError("execDirect - SQLAllocHandle error", SQL_HANDLE_STMT);
 			cleanup();
 			return false;
 		}
 
 		// execute sql satement
-		ret = SQLExecDirect(stmt, (SQLCHAR*)statement.c_str(), SQL_NTS);
+		ret = SQLExecDirect(stmt_, (SQLCHAR*)statement.c_str(), SQL_NTS);
 		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
-			SQLFreeHandle(SQL_HANDLE_STMT, stmt);
-			logError("execDirect - SQLExecDirect error");
+			logError("execDirect - SQLExecDirect error", SQL_HANDLE_STMT);
+			SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 			cleanup();
 			return false;
 		}
 
 		// free the sql statement handle
-		SQLFreeHandle(SQL_HANDLE_STMT, stmt);
+		SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
+		stmt_ = nullptr;
 
 		return true;
 	}
