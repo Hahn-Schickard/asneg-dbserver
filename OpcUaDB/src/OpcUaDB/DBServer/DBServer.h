@@ -27,6 +27,9 @@ namespace OpcUaDB
 		DBServer(void);
 		~DBServer(void);
 
+		bool startup(void);
+		bool shutdown(void);
+
 	  private:
 		bool execSQLDirect(void);
 	};

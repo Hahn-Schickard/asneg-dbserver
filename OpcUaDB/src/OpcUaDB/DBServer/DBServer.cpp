@@ -33,6 +33,19 @@ namespace OpcUaDB
 	}
 
 	bool
+	DBServer::startup(void)
+	{
+		execSQLDirect();
+		return true;
+	}
+
+	bool
+	DBServer::shutdown(void)
+	{
+		return true;
+	}
+
+	bool
 	DBServer::execSQLDirect(void)
 	{
 		bool success;

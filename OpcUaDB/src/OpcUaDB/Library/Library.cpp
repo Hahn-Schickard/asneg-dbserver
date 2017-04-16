@@ -40,6 +40,9 @@ namespace OpcUaDB
 	Library::startup(void)
 	{
 		Log(Debug, "Library::startup");
+		if (!dbServer_.startup()) {
+			return false;
+		}
 		return true;
 	}
 
@@ -47,6 +50,9 @@ namespace OpcUaDB
 	Library::shutdown(void)
 	{
 		Log(Debug, "Library::shutdown");
+		if (!dbServer_.shutdown()) {
+			return false;
+		}
 		return true;
 	}
 
