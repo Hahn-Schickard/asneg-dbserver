@@ -28,6 +28,7 @@ namespace OpcUaDB
 
 	Library::Library(void)
 	: ApplicationIf()
+	, dbServer_()
 	{
 	}
 

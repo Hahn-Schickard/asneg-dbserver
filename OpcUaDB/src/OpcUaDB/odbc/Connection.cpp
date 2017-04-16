@@ -43,7 +43,7 @@ namespace OpcUaDB
 
 		// allocate environment
 		ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &env_);
-		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
+		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
 			logError("init - SQLAllocHandle error");
 			cleanup();
 			return false;
@@ -51,7 +51,7 @@ namespace OpcUaDB
 
 		// ODBC: Version: Set
 		ret = SQLSetEnvAttr(env_, SQL_ATTR_ODBC_VERSION, (void*)SQL_OV_ODBC3, 0);
-		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
+		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
 			logError("init - SQLSetEnvAttr error");
 			cleanup();
 			return false;
@@ -59,7 +59,7 @@ namespace OpcUaDB
 
 		// DBC: Allocate
 		ret = SQLAllocHandle(SQL_HANDLE_DBC, env_, &dbc_);
-		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
+		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
 			logError("init - SQLAllocHandle error");
 			cleanup();
 			return false;
@@ -88,6 +88,7 @@ namespace OpcUaDB
 	{
 		SQLRETURN ret;
 
+		std::cout << "OK" << std::endl;
 		// init
 		if (dbc_ == nullptr) {
 			if (!init()) {
@@ -99,9 +100,9 @@ namespace OpcUaDB
 	    // DBC: Connect
 		ret = SQLConnect(
 		    dbc_,
-		    (SQLCHAR*) "MySQL_Test", SQL_NTS,
-		    (SQLCHAR*) "scott", SQL_NTS,
-		    (SQLCHAR*) "tiger", SQL_NTS
+		    (SQLCHAR*) "myodbc3", SQL_NTS,
+		    (SQLCHAR*) NULL, 0,
+		    (SQLCHAR*) NULL, 0
 		);
 		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
 			logError("connect - SQLConnect error");
@@ -109,6 +110,7 @@ namespace OpcUaDB
 			return false;
 		}
 
+		std::cout << "OK" << std::endl;
 		return true;
 	}
 
@@ -146,6 +148,9 @@ namespace OpcUaDB
 			return false;
 		}
 
+		// free the sql statement handle
+		SQLFreeHandle(SQL_HANDLE_STMT, stmt);
+
 		return true;
 	}
 
@@ -175,108 +180,378 @@ namespace OpcUaDB
 
 
 #if 0
-// Connecting_with_SQLConnect.cpp
-// compile with: user32.lib odbc32.lib
-#include <windows.h>
-#include <sqlext.h>
-#include <mbstring.h>
-#include <stdio.h>
+// You can delete this line if you
+002
+	// are not using Microsoft compiler.
+003
+	#include "stdafx.h"
+004
+	////////////////////////////////////////
+005
+	#include <windows.h>
+006
+	#include <sql.h>
+007
+	#include<sqltypes.h>
+008
+	#include<sqlext.h>
+009
+	#include <string>
+010
+	#include <vector>
+011
+	#include <iostream>
+012
+	using namespace std;
+013
+	// You can delete this line if you
+014
+	// are not using Microsoft VC++ 2008/2010 compiler.
+015
+	#pragma warning(disable: 4996)
+016
+	////////////////////////////////////////
+017
 
-#define MAX_DATA 100
-#define MYSQLSUCCESS(rc) ((rc == SQL_SUCCESS) || (rc == SQL_SUCCESS_WITH_INFO) )
+018
 
-class direxec {
-   RETCODE rc; // ODBC return code
-   HENV henv; // Environment
-   HDBC hdbc; // Connection handle
-   HSTMT hstmt; // Statement handle
+019
+	// Define The ODBC_Class Class
+020
+	class ODBC_Class
+021
+	{
+022
+	    struct ColDescription
+023
+	    {
+024
+	        SQLSMALLINT colNumber;
+025
+	        SQLCHAR colName[80];
+026
+	        SQLSMALLINT nameLen;
+027
+	        SQLSMALLINT dataType;
+028
+	        SQLULEN colSize;
+029
+	        SQLSMALLINT decimalDigits;
+030
+	        SQLSMALLINT nullable;
+031
+	    };
+032
+	// Attributes
+033
+	public:
+034
+	    SQLHANDLE EnvHandle;
+035
+	    SQLHANDLE ConHandle;
+036
+	    SQLHANDLE StmtHandle;
+037
+	    SQLRETURN rc;
+038
+	    vector<ColDescription> cols;
+039
+	    vector< vector<string> > colData;
+040
+	// Operations
+041
+	public:
+042
+	    ODBC_Class(); // Constructor
+043
+	    ~ODBC_Class(); // Destructor
+044
+	    SQLRETURN GetResultset();
+045
+	    void DescribeColumns();
+046
+	private:
+047
+	    _inline SQLRETURN Describe(ColDescription& c);
+048
+	    SQLRETURN GetColData(int colnum, string& str);
+049
+	};
+050
 
-   unsigned char szData[MAX_DATA]; // Returned data storage
-   SDWORD cbData; // Output length of data
-   unsigned char chr_ds_name[SQL_MAX_DSN_LENGTH]; // Data source name
+051
+	// Define The Class Constructor
+052
+	ODBC_Class::ODBC_Class()
+053
+	{
+054
+	    // Initialize The Return Code Variable
+055
+	    rc = SQL_SUCCESS;
+056
+	    // Allocate An Environment Handle
+057
+	    rc = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &EnvHandle);
+058
+	    // Set The ODBC Application Version To 3.x
+059
+	    if (rc == SQL_SUCCESS)
+060
+	        rc = SQLSetEnvAttr(EnvHandle, SQL_ATTR_ODBC_VERSION,
+061
+	            (SQLPOINTER) SQL_OV_ODBC3, SQL_IS_UINTEGER);
+062
+	    // Allocate A Connection Handle
+063
+	    if (rc == SQL_SUCCESS)
+064
+	        rc = SQLAllocHandle(SQL_HANDLE_DBC, EnvHandle, &ConHandle);
+065
+	}
+066
 
-public:
-   direxec(); // Constructor
-   void sqlconn(); // Allocate env, stat, and conn
-   void sqlexec(unsigned char *); // Execute SQL statement
-   void sqldisconn(); // Free pointers to env, stat, conn, and disconnect
-   void error_out(); // Displays errors
-};
+067
+	// Define The Class Destructor
+068
+	ODBC_Class::~ODBC_Class()
+069
+	{
+070
+	    // Free The Connection Handle
+071
+	    if (ConHandle != NULL)
+072
+	        SQLFreeHandle(SQL_HANDLE_DBC, ConHandle);
+073
+	    // Free The Environment Handle
+074
+	    if (EnvHandle != NULL)
+075
+	        SQLFreeHandle(SQL_HANDLE_ENV, EnvHandle);
+076
+	}
+077
 
-// Constructor initializes the string chr_ds_name with the data source name.
-// "Northwind" is an ODBC data source (odbcad32.exe) name whose default is the Northwind database
-direxec::direxec() {
-   _mbscpy_s(chr_ds_name, SQL_MAX_DSN_LENGTH, (const unsigned char *)"Northwind");
-}
+078
+	// Get the data for one column and return the info in the form
+079
+	// of a std::string.  The ODBC driver will make all necessary
+080
+	// data conversions from whatever type the data is in the database
+081
+	// to SQL_CHAR.  You could make this function more comples by
+082
+	// getting the return type as it appears in the database then constructing
+083
+	// a VARIANT object to hold the data.
+084
+	SQLRETURN ODBC_Class::GetColData(int colnum, string& str)
+085
+	{
+086
+	    SQLCHAR buf[255] = {0};
+087
+	    if( (rc = SQLGetData(StmtHandle, colnum, SQL_CHAR, buf, sizeof(buf), NULL)) == SQL_SUCCESS)
+088
+	        str = reinterpret_cast<char*>(buf);
+089
+	    return rc;
+090
+	}
+091
 
-// Allocate environment handle and connection handle, connect to data source, and allocate statement handle.
-void direxec::sqlconn() {
-   SQLAllocEnv(&henv);
-   SQLAllocConnect(henv, &hdbc);
-   rc = SQLConnect(hdbc, chr_ds_name, SQL_NTS, NULL, 0, NULL, 0);
+092
+	//
+093
+	// Define The ShowResults() Member Function
+094
+	SQLRETURN ODBC_Class::GetResultset()
+095
+	{
+096
+	    // Get all column description
+097
+	    DescribeColumns();
+098
+	    // erase anything that's in the colData vector
+099
+	    colData.clear();
+100
+	    // fetch a row from the resultset
+101
+	    while( SQLFetch(StmtHandle) == SQL_SUCCESS)
+102
+	    {
+103
+	        // vector of strings to hold the column data
+104
+	        vector<string> col;
+105
+	        string data;
+106
+	        // column counter
+107
+	        int i = 1;
+108
+	        // get the data for each column and add it to
+109
+	        // the col vector
+110
+	        while( GetColData(i, data) == SQL_SUCCESS)
+111
+	        {
+112
+	            col.push_back(data);
+113
+	            ++i; // increment the column number
+114
+	        }
+115
+	        // add column data to the colData vector
+116
+	        colData.push_back(col);
+117
+	    }
+118
+	    return SQL_SUCCESS;
+119
+	}
+120
 
-   // Deallocate handles, display error message, and exit.
-   if (!MYSQLSUCCESS(rc)) {
-      SQLFreeConnect(henv);
-      SQLFreeEnv(henv);
-      SQLFreeConnect(hdbc);
-      if (hstmt)
-         error_out();
-      exit(-1);
-   }
+121
+	// Get the description for one column in the resultset.
+122
+	// This was made a seprate function to simplify the coding
+123
+	SQLRETURN  ODBC_Class::Describe(ColDescription& c)
+124
+	{
+125
+	    return SQLDescribeCol(StmtHandle,c.colNumber,
+126
+	        c.colName, sizeof(c.colName), &c.nameLen,
+127
+	        &c.dataType, &c.colSize, &c.decimalDigits, &c.nullable);
+128
+	}
+129
 
-   rc = SQLAllocStmt(hdbc, &hstmt);
-}
+130
+	// Get the description for all the columns in the resultset.
+131
+	void ODBC_Class::DescribeColumns()
+132
+	{
+133
+	    ColDescription c;
+134
+	    c.colNumber = 1;
+135
+	    cols.clear();
+136
+	    while( Describe(c) == SQL_SUCCESS)
+137
+	    {
+138
+	        cols.push_back(c);
+139
+	        ++c.colNumber;
+140
+	    }
+141
 
-// Execute SQL command with SQLExecDirect() ODBC API.
-void direxec::sqlexec(unsigned char * cmdstr) {
-   rc = SQLExecDirect(hstmt, cmdstr, SQL_NTS);
-   if (!MYSQLSUCCESS(rc)) {  //Error
-      error_out();
-      // Deallocate handles and disconnect.
-      SQLFreeStmt(hstmt,SQL_DROP);
-      SQLDisconnect(hdbc);
-      SQLFreeConnect(hdbc);
-      SQLFreeEnv(henv);
-      exit(-1);
-   }
-   else {
-      for ( rc = SQLFetch(hstmt) ; rc == SQL_SUCCESS ; rc=SQLFetch(hstmt) ) {
-         SQLGetData(hstmt, 1, SQL_C_CHAR, szData, sizeof(szData), &cbData);
-         // In this example, the data is sent to the console; SQLBindCol() could be called to bind
-         // individual rows of data and assign for a rowset.
-         printf("%s\n", (const char *)szData);
-      }
-   }
-}
+142
+	}
+143
 
-// Free the statement handle, disconnect, free the connection handle, and free the environment handle.
-void direxec::sqldisconn() {
-   SQLFreeStmt(hstmt,SQL_DROP);
-   SQLDisconnect(hdbc);
-   SQLFreeConnect(hdbc);
-   SQLFreeEnv(henv);
-}
+144
 
-// Display error message in a message box that has an OK button.
-void direxec::error_out() {
-   unsigned char szSQLSTATE[10];
-   SDWORD nErr;
-   unsigned char msg[SQL_MAX_MESSAGE_LENGTH + 1];
-   SWORD cbmsg;
+145
+	/*-----------------------------------------------------------------*/
+146
+	/* The Main Function */
+147
+	/*-----------------------------------------------------------------*/
+148
+	int main()
+149
+	{
+150
+	    // Declare The Local Memory Variables
+151
+	    SQLRETURN rc = SQL_SUCCESS;
+152
+	    SQLCHAR DBName[] = "Northwind";
+153
+	    SQLCHAR SQLStmt[255] = {0};
+154
+	    // Create An Instance Of The ODBC_Class Class
+155
+	    ODBC_Class Example;
+156
+	    // Connect To The Northwind Sample Database
+157
+	    if (Example.ConHandle != NULL)
+158
+	    {
+159
+	        rc = SQLConnect(Example.ConHandle, DBName, SQL_NTS,
+160
+	            (SQLCHAR *) "", SQL_NTS, (SQLCHAR *) "", SQL_NTS);
+161
+	        // Allocate An SQL Statement Handle
+162
+	        rc = SQLAllocHandle(SQL_HANDLE_STMT, Example.ConHandle,
+163
+	                &Example.StmtHandle);
+164
+	        if (rc == SQL_SUCCESS)
+165
+	        {
+166
+	            // Define A SELECT SQL Statement
+167
+	            strcpy((char *) SQLStmt, "SELECT * FROM categories");
+168
+	            // Prepare And Execute The SQL Statement
+169
+	            rc = SQLExecDirect(Example.StmtHandle, SQLStmt, SQL_NTS);
+170
+	            // Display The Results Of The SQL Query
+171
+	            if (rc == SQL_SUCCESS)
+172
+	            {
+173
+	                Example.GetResultset();
+174
+	                // At this point you would want to do something
+175
+	                // with the resultset, such as display it.
+176
+	            }
+177
+	        }
+178
+	        // Free The SQL Statement Handle
+179
+	        if (Example.StmtHandle != NULL)
+180
+	            SQLFreeHandle(SQL_HANDLE_STMT, Example.StmtHandle);
+181
+	        // Disconnect From The Northwind Sample Database
+182
+	        rc = SQLDisconnect(Example.ConHandle);
+183
+	    }
+184
+	    // Return To The Operating System
+185
+	    return 0;
+186
+	}
 
-   while (SQLError(0, 0, hstmt, szSQLSTATE, &nErr, msg, sizeof(msg), &cbmsg) == SQL_SUCCESS) {
-      sprintf_s((char *)szData, sizeof(szData), "Error:\nSQLSTATE=%s, Native error=%ld, msg='%s'", szSQLSTATE, nErr, msg);
-      MessageBox(NULL, (const char *)szData, "ODBC Error", MB_OK);
-   }
-}
-
-int main () {
-   direxec x;   // Declare an instance of the direxec object.
-   x.sqlconn();   // Allocate handles, and connect.
-   x.sqlexec((UCHAR FAR *)"SELECT FirstName, LastName FROM employees");   // Execute SQL command
-   x.sqldisconn();   // Free handles and disconnect
-}
 
 #endif
 

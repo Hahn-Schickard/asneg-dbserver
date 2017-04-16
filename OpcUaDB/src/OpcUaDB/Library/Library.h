@@ -19,6 +19,7 @@
 #define __OpcUaDB_Library_h__
 
 #include "OpcUaStackServer/Application/ApplicationIf.h"
+#include "OpcUaDB/DBServer/DBServer.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
@@ -40,6 +41,7 @@ namespace OpcUaDB
 		//- ApplicationIf -----------------------------------------------------
 
 	  private:
+		DBServer dbServer_;
 	};
 
 }
