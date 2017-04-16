@@ -18,16 +18,47 @@
 #include "OpcUaStackCore/Base/os.h"
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaDB/DBServer/DBServer.h"
+#include "OpcUaDB/odbc/Connection.h"
 
 namespace OpcUaDB
 {
 
 	DBServer::DBServer(void)
 	{
+		execSQLDirect();
 	}
 
 	DBServer::~DBServer(void)
 	{
+	}
+
+	bool
+	DBServer::execSQLDirect(void)
+	{
+		bool success;
+		Connection connection;
+
+		// connect to database
+		success = connection.connect();
+		if (!success) {
+			return false;
+		}
+
+		// execute sql statement
+		success = connection.execDirect("select * from TestTable");
+		if (!success) {
+			connection.disconnect();
+			return false;
+		}
+
+		// disconnect to database
+		success = connection.disconnect();
+		if (!success) {
+			return false;
+		}
+
+		std::cout << "sql query success..." << std::endl;
+		return true;
 	}
 }
 
