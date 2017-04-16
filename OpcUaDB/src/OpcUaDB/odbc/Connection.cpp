@@ -27,7 +27,7 @@ namespace OpcUaDB
 	Connection::Connection(void)
 	: env_(nullptr)
 	, dbc_(nullptr)
-	, hstmt_(nullptr)
+	, stmt_(nullptr)
 	{
 	}
 
@@ -88,7 +88,6 @@ namespace OpcUaDB
 	{
 		SQLRETURN ret;
 
-		std::cout << "OK" << std::endl;
 		// init
 		if (dbc_ == nullptr) {
 			if (!init()) {
@@ -98,19 +97,21 @@ namespace OpcUaDB
 		}
 
 	    // DBC: Connect
+		std::cout << "OK1" << std::endl;
 		ret = SQLConnect(
 		    dbc_,
-		    (SQLCHAR*) "myodbc3", SQL_NTS,
-		    (SQLCHAR*) NULL, 0,
-		    (SQLCHAR*) NULL, 0
+		    (SQLCHAR*)"myodbc3", SQL_NTS,
+		    NULL, 0,
+		    NULL, 0
 		);
-		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
+		std::cout << "OK2" << std::endl;
+		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
 			logError("connect - SQLConnect error");
 			cleanup();
 			return false;
 		}
 
-		std::cout << "OK" << std::endl;
+		std::cout << "OK3" << std::endl;
 		return true;
 	}
 
@@ -133,7 +134,7 @@ namespace OpcUaDB
 		// allocate sql statement handle
 		SQLHANDLE stmt;
 		ret = SQLAllocHandle(SQL_HANDLE_STMT, dbc_, &stmt);
-		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
+		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
 			logError("execDirect - SQLAllocHandle error");
 			cleanup();
 			return false;
@@ -141,7 +142,7 @@ namespace OpcUaDB
 
 		// execute sql satement
 		ret = SQLExecDirect(stmt, (SQLCHAR*)statement.c_str(), SQL_NTS);
-		if ((ret == SQL_SUCCESS) || (ret == SQL_SUCCESS_WITH_INFO)) {
+		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
 			SQLFreeHandle(SQL_HANDLE_STMT, stmt);
 			logError("execDirect - SQLExecDirect error");
 			cleanup();
@@ -155,25 +156,58 @@ namespace OpcUaDB
 	}
 
 	void
-	Connection::logError(const std::string& message)
+	Connection::logError(const std::string& message, uint32_t handle)
 	{
-		if (!hstmt_) {
-			Log(Error, message);
-			return;
-		}
-
 		unsigned char szData[100];
 		unsigned char sqlState[10];
 		unsigned char msg[SQL_MAX_MESSAGE_LENGTH + 1];
 		SQLINTEGER nErr;
 		SQLSMALLINT cbmsg;
 
-		while (SQLError(0, 0, hstmt_, sqlState, &nErr, msg, sizeof(msg), &cbmsg) == SQL_SUCCESS) {
-		    Log(Error, message)
-		        .parameter("SQLState", sqlState)
-		        .parameter("NativeError", nErr)
-		        .parameter("Msg", msg);
+		Log(Error, message);
 
+		switch (handle)
+		{
+			case SQL_HANDLE_ENV:
+			{
+				if (env_ == nullptr) return;
+				while (SQLError(env_, 0, 0, sqlState, &nErr, msg, sizeof(msg), &cbmsg) == SQL_SUCCESS) {
+					Log(Error, "environment error")
+					    .parameter("SQLState", sqlState)
+					    .parameter("NativeError", nErr)
+					    .parameter("Msg", msg);
+				}
+				break;
+			}
+
+			case SQL_HANDLE_DBC:
+			{
+				if (dbc_ == nullptr) return;
+				while (SQLError(0, dbc_, 0, sqlState, &nErr, msg, sizeof(msg), &cbmsg) == SQL_SUCCESS) {
+					Log(Error, "database connection error")
+					    .parameter("SQLState", sqlState)
+					    .parameter("NativeError", nErr)
+					    .parameter("Msg", msg);
+				}
+				break;
+			}
+
+			case SQL_HANDLE_STMT:
+			{
+				if (stmt_ == nullptr) return;
+				while (SQLError(0, 0, stmt_, sqlState, &nErr, msg, sizeof(msg), &cbmsg) == SQL_SUCCESS) {
+					Log(Error, "statement error")
+					    .parameter("SQLState", sqlState)
+					    .parameter("NativeError", nErr)
+					    .parameter("Msg", msg);
+				}
+				break;
+			}
+
+			default:
+			{
+				break;
+			}
 		}
 	}
 }

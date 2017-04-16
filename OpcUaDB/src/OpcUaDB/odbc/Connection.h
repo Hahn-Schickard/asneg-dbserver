@@ -21,6 +21,7 @@
 #include <sql.h>
 #include <sqlext.h>
 #include <iostream>
+#include <stdint.h>
 
 namespace OpcUaDB
 {
@@ -39,11 +40,11 @@ namespace OpcUaDB
 		bool execDirect(const std::string& statement);
 
 	  private:
-		void logError(const std::string& message);
+		void logError(const std::string& message, uint32_t handle = 0);
 
 	    SQLHENV env_;
 	    SQLHDBC dbc_;
-	    HSTMT hstmt_;
+	    HSTMT stmt_;
 	};
 
 }
