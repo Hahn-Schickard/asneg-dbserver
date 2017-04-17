@@ -25,7 +25,6 @@ namespace OpcUaDB
 
 	DBServer::DBServer(void)
 	{
-		execSQLDirect();
 	}
 
 	DBServer::~DBServer(void)
@@ -58,7 +57,7 @@ namespace OpcUaDB
 		}
 
 		// execute sql statement
-		success = connection.execDirect("select * from TestTable");
+		success = connection.execDirect("select * from \"TestData\"");
 		if (!success) {
 			connection.disconnect();
 			return false;

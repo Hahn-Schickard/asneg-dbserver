@@ -97,21 +97,18 @@ namespace OpcUaDB
 		}
 
 	    // DBC: Connect
-		std::cout << "OK1" << std::endl;
 		ret = SQLConnect(
 		    dbc_,
-		    (SQLCHAR*)"myodbc3", SQL_NTS,
+		    (SQLCHAR*)"PostgreSQL TestData", SQL_NTS,
 		    NULL, 0,
 		    NULL, 0
 		);
-		std::cout << "OK2" << std::endl;
 		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
 			logError("connect - SQLConnect error", SQL_HANDLE_DBC);
 			cleanup();
 			return false;
 		}
 
-		std::cout << "OK3" << std::endl;
 		return true;
 	}
 
@@ -129,7 +126,9 @@ namespace OpcUaDB
 		SQLRETURN ret;
 
 		// check
-		if (dbc_ == nullptr) return false;
+		if (dbc_ == nullptr) {
+			return false;
+		}
 
 		// allocate sql statement handle
 		ret = SQLAllocHandle(SQL_HANDLE_STMT, dbc_, &stmt_);
