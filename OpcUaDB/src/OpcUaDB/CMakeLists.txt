@@ -58,8 +58,7 @@ target_link_libraries(
     ${OPCUASTACK_LIBRARY_CORE}
     ${OPCUASTACK_LIBRARY_CLIENT}
     ${Boost_LIBRARIES}
-    /usr/lib/x86_64-linux-gnu/odbc/libmyodbc.so
-#    /usr/lib/x86_64-linux-gnu/libmysqlclient.so
+    libodbc.so
 )
 
 # -----------------------------------------------------------------------------
