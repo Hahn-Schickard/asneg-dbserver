@@ -18,8 +18,10 @@
 #ifndef __OpcUaDB_Library_h__
 #define __OpcUaDB_Library_h__
 
+#include "OpcUaStackCore/Base/ConfigXmlManager.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaDB/DBServer/DBServer.h"
+#include "OpcUaDB/DBServer/DBModelConfig.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
@@ -41,7 +43,10 @@ namespace OpcUaDB
 		//- ApplicationIf -----------------------------------------------------
 
 	  private:
+		IOThread::SPtr ioThread_;
+		ConfigXmlManager configXmlManager_;
 		DBServer dbServer_;
+		DBModelConfig dbModelConfig_;
 	};
 
 }

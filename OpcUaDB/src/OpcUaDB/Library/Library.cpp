@@ -28,6 +28,8 @@ namespace OpcUaDB
 
 	Library::Library(void)
 	: ApplicationIf()
+	, configXmlManager_()
+	, ioThread_()
 	, dbServer_()
 	{
 	}
@@ -40,6 +42,43 @@ namespace OpcUaDB
 	Library::startup(void)
 	{
 		Log(Debug, "Library::startup");
+
+		//
+		// create own thread
+		//
+		ioThread_ = constructSPtr<IOThread>();
+		if (!ioThread_->startup()) return false;
+
+
+		//
+        // read database model configuration file
+		//
+		Config::SPtr config;
+        if (!configXmlManager_.registerConfiguration(applicationInfo()->configFileName(), config)) {
+        	return false;
+        }
+        Log(Info, "read configuration file")
+            .parameter("ConfigFileName", applicationInfo()->configFileName());
+
+
+        //
+        // decode configuration
+        //
+        boost::optional<Config> child = config->getChild("DBModel");
+        if (!child) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", "DBModel")
+				.parameter("ConfigFileName", config->configFileName());
+			return false;
+        }
+        if (!dbModelConfig_.decode(*child)) {
+        	return false;
+        }
+
+
+        //
+		// startup database server
+        //
 		if (!dbServer_.startup()) {
 			return false;
 		}
@@ -50,6 +89,8 @@ namespace OpcUaDB
 	Library::shutdown(void)
 	{
 		Log(Debug, "Library::shutdown");
+
+		// shutdown database server
 		if (!dbServer_.shutdown()) {
 			return false;
 		}
