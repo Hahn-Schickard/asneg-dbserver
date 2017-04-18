@@ -26,6 +26,18 @@
 namespace OpcUaDB
 {
 
+	class ColDescription
+    {
+      public:
+        SQLSMALLINT colNumber_;
+        SQLCHAR colName_[80];
+        SQLSMALLINT nameLen_;
+        SQLSMALLINT dataType_;
+        SQLULEN colSize_;
+        SQLSMALLINT decimalDigits_;
+        SQLSMALLINT nullable_;
+    };
+
 	class Connection
 	{
 	  public:
