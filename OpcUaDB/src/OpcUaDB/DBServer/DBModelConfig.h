@@ -20,6 +20,7 @@
 
 #include "OpcUaStackCore/Base/ConfigXmlManager.h"
 #include "OpcUaDB/DBServer/DatabaseConfig.h"
+#include "OpcUaDB/DBServer/OpcUaAccessConfig.h"
 
 using namespace OpcUaStackCore;
 
@@ -33,11 +34,13 @@ namespace OpcUaDB
 		~DBModelConfig(void);
 
 		DatabaseConfig& databaseConfig(void);
+		OpcUaAccessConfig& opcUaAccessConfig(void);
 
 		bool decode(Config& config);
 
 	  private:
 		DatabaseConfig databaseConfig_;
+		OpcUaAccessConfig opcUaAccessConfig_;
 	};
 
 }

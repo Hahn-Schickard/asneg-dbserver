@@ -32,6 +32,7 @@ namespace OpcUaDB
 	// ------------------------------------------------------------------------
 	DBModelConfig::DBModelConfig(void)
 	: databaseConfig_()
+	, opcUaAccessConfig_()
 	{
 	}
 
@@ -43,6 +44,12 @@ namespace OpcUaDB
 	DBModelConfig::databaseConfig(void)
 	{
 		return databaseConfig_;
+	}
+
+	OpcUaAccessConfig&
+	DBModelConfig::opcUaAccessConfig(void)
+	{
+		return opcUaAccessConfig_;
 	}
 
 	bool
@@ -57,6 +64,19 @@ namespace OpcUaDB
 			return false;
 		}
 		if (!databaseConfig_.decode(*child)) {
+			return false;
+		}
+
+		// get opc ua access configuration
+		boost::optional<Config> accessConfig = config.getChild("OpcUaAccess");
+		if (!child) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", "DBModel.OpcUaAccess")
+				.parameter("ConfigFileName", config.configFileName());
+			return false;
+		}
+		opcUaAccessConfig_.configFileName(config.configFileName());
+		if (!opcUaAccessConfig_.decode(*accessConfig)) {
 			return false;
 		}
 
