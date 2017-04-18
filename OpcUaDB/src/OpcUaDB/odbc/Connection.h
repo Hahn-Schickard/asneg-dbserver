@@ -40,6 +40,15 @@ namespace OpcUaDB
         SQLSMALLINT nullable_;
     };
 
+	class ResultSet
+	{
+	  public:
+		typedef std::vector<std::vector<std::string > > TableData;
+
+		ColDescription::Vec colDescriptionVec_;
+		TableData tableData_;
+	};
+
 	class Connection
 	{
 	  public:
@@ -54,6 +63,7 @@ namespace OpcUaDB
 		bool execDirect(const std::string& statement);
 
 	  private:
+		bool getResultSet(ResultSet& resultSet);
 		bool describe(ColDescription& colDescription);
 		bool describe(ColDescription::Vec& colDescriptionVec);
 		void logError(const std::string& message, uint32_t handle = 0);

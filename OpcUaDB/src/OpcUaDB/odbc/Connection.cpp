@@ -155,15 +155,16 @@ namespace OpcUaDB
 			return false;
 		}
 
-		ColDescription::Vec::iterator it;
-		for (it = colDescriptionVec.begin(); it != colDescriptionVec.end(); it++) {
-			std::cout << "Col: " << it->colName_ << std::endl;
-		}
-
 		// free the sql statement handle
 		SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 		stmt_ = nullptr;
 
+		return true;
+	}
+
+	bool
+	Connection::getResultSet(ResultSet& resultSet)
+	{
 		return true;
 	}
 
