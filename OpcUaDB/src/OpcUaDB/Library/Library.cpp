@@ -67,7 +67,6 @@ namespace OpcUaDB
         //
         // decode configuration
         //
-        std::cout << "XXX" << std::endl;
         boost::optional<Config> child = config->getChild("DBModel");
         if (!child) {
 			Log(Error, "element missing in config file")
