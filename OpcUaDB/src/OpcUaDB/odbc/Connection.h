@@ -64,6 +64,9 @@ namespace OpcUaDB
 		bool init(void);
 		bool cleanup(void);
 
+		std::string name(void);
+		void name(const std::string& name);
+
 		bool connect(void);
 		bool disconnect(void);
 		bool execDirect(const std::string& statement);
@@ -75,6 +78,7 @@ namespace OpcUaDB
 		bool describe(ColDescription::Vec& colDescriptionVec);
 		void logError(const std::string& message, uint32_t handle = 0);
 
+		std::string name_;
 	    SQLHENV env_;
 	    SQLHDBC dbc_;
 	    HSTMT stmt_;

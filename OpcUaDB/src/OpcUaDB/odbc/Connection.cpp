@@ -87,7 +87,8 @@ namespace OpcUaDB
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	Connection::Connection(void)
-	: env_(nullptr)
+	: name_("")
+	, env_(nullptr)
 	, dbc_(nullptr)
 	, stmt_(nullptr)
 	{
@@ -145,6 +146,18 @@ namespace OpcUaDB
 		return true;
 	}
 
+	std::string
+	Connection::name(void)
+	{
+		return name_;
+	}
+
+	void
+	Connection::name(const std::string& name)
+	{
+		name_ = name;
+	}
+
 	bool
 	Connection::connect(void)
 	{
@@ -161,7 +174,7 @@ namespace OpcUaDB
 	    // DBC: Connect
 		ret = SQLConnect(
 		    dbc_,
-		    (SQLCHAR*)"PostgreSQL TestData", SQL_NTS,
+		    (SQLCHAR*)name_.c_str(), SQL_NTS,
 		    NULL, 0,
 		    NULL, 0
 		);

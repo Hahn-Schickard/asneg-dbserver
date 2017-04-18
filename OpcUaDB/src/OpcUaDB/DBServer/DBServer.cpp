@@ -25,6 +25,7 @@ namespace OpcUaDB
 
 	DBServer::DBServer(void)
 	: applicationServiceIf_(nullptr)
+	, dbModelConfig_(nullptr)
 	{
 	}
 
@@ -64,6 +65,7 @@ namespace OpcUaDB
 		Connection connection;
 
 		// connect to database
+		connection.name(dbModelConfig_->databaseConfig().name());
 		success = connection.connect();
 		if (!success) {
 			return false;
