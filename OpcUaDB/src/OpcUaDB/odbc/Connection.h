@@ -44,6 +44,11 @@ namespace OpcUaDB
 	{
 	  public:
 		typedef std::vector<std::vector<std::string > > TableData;
+		ResultSet(void);
+		~ResultSet(void);
+
+		uint32_t colNumber(void);
+		uint32_t rowNumber(void);
 
 		ColDescription::Vec colDescriptionVec_;
 		TableData tableData_;

@@ -24,6 +24,43 @@ using namespace OpcUaStackCore;
 namespace OpcUaDB
 {
 
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// ResultSet
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	ResultSet::ResultSet(void)
+	: colDescriptionVec_()
+	, tableData_()
+	{
+	}
+
+	ResultSet::~ResultSet(void)
+	{
+	}
+
+	uint32_t
+	ResultSet::colNumber(void)
+	{
+		return colDescriptionVec_.size();
+	}
+
+	uint32_t
+	ResultSet::rowNumber(void)
+	{
+		if (colNumber() == 0) return 0;
+		return tableData_.size() / colNumber();
+	}
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// Connection
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 	Connection::Connection(void)
 	: env_(nullptr)
 	, dbc_(nullptr)
@@ -147,9 +184,9 @@ namespace OpcUaDB
 			return false;
 		}
 
-		// get description for all columns in the result set
-		ColDescription::Vec colDescriptionVec;
-		if (!describe(colDescriptionVec)) {
+		// get data from result set
+		ResultSet resultSet;
+		if (!getResultSet(resultSet)) {
 			SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 			cleanup();
 			return false;
@@ -165,6 +202,16 @@ namespace OpcUaDB
 	bool
 	Connection::getResultSet(ResultSet& resultSet)
 	{
+		// get description for all columns in the result set
+		if (!describe(resultSet.colDescriptionVec_)) {
+			return false;
+		}
+
+		// read data from result set
+		resultSet.tableData_.clear();
+		while (SQLFetch(stmt_) == SQL_SUCCESS) {
+		}
+
 		return true;
 	}
 
