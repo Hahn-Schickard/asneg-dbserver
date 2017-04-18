@@ -35,6 +35,9 @@ namespace OpcUaDB
 		~OpcUaAccessConfig(void);
 
     	void configFileName(const std::string& configFileName);
+    	NamespaceUris& namespaceUris(void);
+    	OpcUaReferenceConfig& identAccess(void);
+    	OpcUaReferenceConfig& sqlAccess(void);
 
 		bool decode(Config& config);
 

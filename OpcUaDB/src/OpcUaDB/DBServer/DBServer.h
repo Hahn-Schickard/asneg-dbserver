@@ -29,6 +29,8 @@ namespace OpcUaDB
 	class DBServer
 	{
 	  public:
+		typedef std::map<uint32_t, uint32_t> NamespaceMap;
+
 		DBServer(void);
 		~DBServer(void);
 
@@ -39,8 +41,11 @@ namespace OpcUaDB
 		bool shutdown(void);
 
 	  private:
+		bool getNamespaceInfo(void);
+
 		bool execSQLDirect(void);
 
+		NamespaceMap namespaceMap_;
 		ApplicationServiceIf* applicationServiceIf_;
 		DBModelConfig* dbModelConfig_;
 	};

@@ -47,6 +47,24 @@ namespace OpcUaDB
 		configFileName_ = configFileName;
 	}
 
+	OpcUaAccessConfig::NamespaceUris&
+	OpcUaAccessConfig::namespaceUris(void)
+	{
+		return namespaceUris_;
+	}
+
+	OpcUaReferenceConfig&
+	OpcUaAccessConfig::identAccess(void)
+	{
+		return identAccess_;
+	}
+
+	OpcUaReferenceConfig&
+	OpcUaAccessConfig::sqlAccess(void)
+	{
+		return sqlAccess_;
+	}
+
 	bool
 	OpcUaAccessConfig::decode(Config& config)
 	{
