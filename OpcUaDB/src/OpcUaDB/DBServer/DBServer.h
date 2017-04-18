@@ -18,6 +18,7 @@
 #ifndef __OpcUaDB_DBServer_h__
 #define __OpcUaDB_DBServer_h__
 
+#include "OpcUaStackCore/Application/ApplicationMethodContext.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaDB/DBServer/DBModelConfig.h"
 
@@ -42,12 +43,18 @@ namespace OpcUaDB
 
 	  private:
 		bool getNamespaceInfo(void);
+		bool registerCalls(void);
+		void identAccessCall(ApplicationMethodContext* applicationMethodContext);
+		void sqlAccessCall(ApplicationMethodContext* applicationMethodContext);
 
 		bool execSQLDirect(void);
 
 		NamespaceMap namespaceMap_;
 		ApplicationServiceIf* applicationServiceIf_;
 		DBModelConfig* dbModelConfig_;
+
+	    Callback identAccessCallback_;
+	    Callback sqlAccessCallback_;
 	};
 
 }

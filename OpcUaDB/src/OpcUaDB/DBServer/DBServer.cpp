@@ -52,6 +52,16 @@ namespace OpcUaDB
 	bool
 	DBServer::startup(void)
 	{
+		// mapping namespace uris
+		if (!getNamespaceInfo()) {
+			return false;
+		}
+
+		// register calls
+		if (!registerCalls()) {
+			return false;
+		}
+
 		execSQLDirect();
 		return true;
 	}
@@ -134,6 +144,25 @@ namespace OpcUaDB
 		}
 
 		return true;
+	}
+
+	bool
+	DBServer::registerCalls(void)
+	{
+		// FIXME: todo
+		return true;
+	}
+
+	void
+	DBServer::identAccessCall(ApplicationMethodContext* applicationMethodContext)
+	{
+		// FIXME: todo
+	}
+
+	void
+	DBServer::sqlAccessCall(ApplicationMethodContext* applicationMethodContext)
+	{
+		// FIXME: todo
 	}
 }
 
