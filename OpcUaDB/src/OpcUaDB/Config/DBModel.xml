@@ -21,6 +21,6 @@
       <Server Service="Call" NodeId="ns=1;s=SQLAccessString"/>
 	</SQLAccess>
 	
-  <OpcUaAccess>
+  </OpcUaAccess>
 
 </DBModel>
