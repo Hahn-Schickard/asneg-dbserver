@@ -13,11 +13,11 @@
       <Uri>http://ASNeG.de/DBServer/</Uri>
 	</NamespaceUris>
 	
-	<SQLAccess Name="IdentAccessString">
+	<IdentAccess>
       <Server Service="Call" NodeId="ns=1;s=IdentAccessString"/>
-	</SQLAccess>
+	</IdentAccess>
 	
-	<SQLAccess Name="SQLAccessString">
+	<SQLAccess>
       <Server Service="Call" NodeId="ns=1;s=SQLAccessString"/>
 	</SQLAccess>
 	

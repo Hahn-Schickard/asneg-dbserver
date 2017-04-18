@@ -31,6 +31,9 @@ namespace OpcUaDB
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	OpcUaAccessConfig::OpcUaAccessConfig(void)
+	: namespaceUris_()
+	, identAccess_()
+	, sqlAccess_()
 	{
 	}
 
@@ -38,12 +41,67 @@ namespace OpcUaDB
 	{
 	}
 
+	void
+	OpcUaAccessConfig::configFileName(const std::string& configFileName)
+	{
+		configFileName_ = configFileName;
+	}
+
 	bool
 	OpcUaAccessConfig::decode(Config& config)
 	{
 		bool success;
 
+		// decode NamespaceUris element
+		boost::optional<Config> namespaceUris = config.getChild("NamespaceUris");
+		if (!namespaceUris) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", "DBModel.OpcUaAccess.NamespaceUris")
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+		if (!decodeNamespaceUris(*namespaceUris)) {
+			return false;
+		}
+
+		// decode ident access
+		// FIXME:
+
+		// decode sql access
+		// FIXME:
+
 		return true;
+	}
+
+	bool
+	OpcUaAccessConfig::decodeNamespaceUris(Config& config)
+	{
+		// get Uri elements
+		config.getValues("Uri", namespaceUris_);
+		if (namespaceUris_.size() == 0) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", "DBModel.OpcUaAccess.NamespaceUris.Uri")
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+
+		return true;
+	}
+
+	bool
+	OpcUaAccessConfig::decodeIdentAccess(Config& config)
+	{
+		identAccess_.configFileName(configFileName_);
+		identAccess_.elementPrefix("DBModel.OpcUaAccess.IdentAccess.Server");
+		return identAccess_.decode(config);
+	}
+
+	bool
+	OpcUaAccessConfig::decodeSQLAccess(Config& config)
+	{
+		sqlAccess_.configFileName(configFileName_);
+		sqlAccess_.elementPrefix("DBModel.OpcUaAccess.SQLAccess.Server");
+		return sqlAccess_.decode(config);
 	}
 
 }

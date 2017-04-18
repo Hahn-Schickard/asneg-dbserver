@@ -19,6 +19,7 @@
 #define __OpcUaDB_OpcUaAccessConfig_h__
 
 #include "OpcUaStackCore/Base/ConfigXmlManager.h"
+#include "OpcUaStackCore/ApplicationUtility/OpcUaReferenceConfig.h"
 
 using namespace OpcUaStackCore;
 
@@ -28,12 +29,24 @@ namespace OpcUaDB
 	class OpcUaAccessConfig
 	{
 	  public:
+		typedef std::vector<std::string> NamespaceUris;
+
 		OpcUaAccessConfig(void);
 		~OpcUaAccessConfig(void);
+
+    	void configFileName(const std::string& configFileName);
 
 		bool decode(Config& config);
 
 	  private:
+		bool decodeNamespaceUris(Config& config);
+		bool decodeIdentAccess(Config& config);
+		bool decodeSQLAccess(Config& config);
+
+		std::string configFileName_;
+		NamespaceUris namespaceUris_;
+    	OpcUaReferenceConfig identAccess_;
+    	OpcUaReferenceConfig sqlAccess_;
 	};
 
 }
