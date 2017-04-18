@@ -46,8 +46,10 @@ namespace OpcUaDB
 		bool registerCalls(void);
 		bool registerIdentAccessCall(void);
 		bool registerSQLAccessCall(void);
+		bool registerAccessCall(void);
 		void identAccessCall(ApplicationMethodContext* applicationMethodContext);
 		void sqlAccessCall(ApplicationMethodContext* applicationMethodContext);
+		void accessCall(ApplicationMethodContext* applicationMethodContext);
 
 		bool execSQLDirect(void);
 
@@ -57,6 +59,7 @@ namespace OpcUaDB
 
 	    Callback identAccessCallback_;
 	    Callback sqlAccessCallback_;
+	    Callback accessCallback_;
 	};
 
 }

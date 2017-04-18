@@ -32,6 +32,7 @@ namespace OpcUaDB
 	, namespaceMap_()
 	, identAccessCallback_(boost::bind(&DBServer::identAccessCall, this, _1))
 	, sqlAccessCallback_(boost::bind(&DBServer::sqlAccessCall, this, _1))
+	, accessCallback_(boost::bind(&DBServer::accessCall, this, _1))
 	{
 	}
 
@@ -157,6 +158,9 @@ namespace OpcUaDB
 		if (!registerSQLAccessCall()) {
 			return false;
 		}
+		if (!registerAccessCall()) {
+			return false;
+		}
 		return true;
 	}
 
@@ -206,6 +210,7 @@ namespace OpcUaDB
 
     	return true;
 	}
+
 	bool
 	DBServer::registerSQLAccessCall(void)
 	{
@@ -253,11 +258,60 @@ namespace OpcUaDB
     	return true;
 	}
 
+	bool
+	DBServer::registerAccessCall(void)
+	{
+	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
+	  	RegisterForwardRequest::SPtr req = trx->request();
+	  	RegisterForwardResponse::SPtr res = trx->response();
+
+        req->forwardInfoSync()->methodService().setCallback(accessCallback_);
+	  	req->nodesToRegister()->resize(1);
+
+	  	OpcUaNodeId::SPtr nodeId = constructSPtr<OpcUaNodeId>();
+	    nodeId->set("DBAcess", 1);
+
+  		NamespaceMap::iterator it;
+  		it = namespaceMap_.find(nodeId->namespaceIndex());
+  		if (it == namespaceMap_.end()) {
+  			Log(Error, "namespace index not exist in opc ua model")
+  				.parameter("NodeId", *nodeId);
+  			return false;
+  		}
+  		nodeId->namespaceIndex(it->second);
+
+  		req->nodesToRegister()->set(0, nodeId);
+
+	  	applicationServiceIf_->sendSync(trx);
+	  	if (trx->statusCode() != Success) {
+	  		Log(Error, "register forward response error")
+	  		    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(trx->statusCode()));
+	  		return false;
+	  	}
+
+	  	if (res->statusCodeArray()->size() != 1) {
+	  		Log(Error, "register forward result error");
+	  		return false;
+	  	}
+
+  		OpcUaStatusCode statusCode;
+  		res->statusCodeArray()->get(0, statusCode);
+  		if (statusCode != Success) {
+	  		Log(Error, "register forward value error")
+	  		    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(statusCode));
+  			return false;
+  		}
+
+    	return true;
+	}
+
 	void
 	DBServer::identAccessCall(ApplicationMethodContext* applicationMethodContext)
 	{
 		std::cout << "call ident access call" << std::endl;
 		// FIXME: todo
+
+		applicationMethodContext->statusCode_ = Success;
 	}
 
 	void
@@ -265,6 +319,15 @@ namespace OpcUaDB
 	{
 		std::cout << "call sql access call" << std::endl;
 		// FIXME: todo
+
+		applicationMethodContext->statusCode_ = Success;
+	}
+
+	void
+	DBServer::accessCall(ApplicationMethodContext* applicationMethodContext)
+	{
+		std::cout << "call access call" << std::endl;
+		applicationMethodContext->statusCode_ = Success;
 	}
 }
 
