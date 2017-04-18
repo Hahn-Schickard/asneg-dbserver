@@ -154,6 +154,33 @@ namespace OpcUaDB
 		return true;
 	}
 
+	bool
+	Connection::describe(ColDescription& colDescription)
+	{
+		SQLRETURN ret;
+
+		// get the description for one column in the resultset.
+		ret = SQLDescribeCol(
+			stmt_,
+			colDescription.colNumber_,
+			colDescription.colName_,
+			sizeof(colDescription.colName_),
+			&colDescription.nameLen_,
+			&colDescription.dataType_,
+			&colDescription.colSize_,
+			&colDescription.decimalDigits_,
+			&colDescription.nullable_
+		);
+		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
+			logError("execDirect - SQLDescribeCol error", SQL_HANDLE_STMT);
+			SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
+			cleanup();
+			return false;
+		}
+
+		return true;
+	}
+
 	void
 	Connection::logError(const std::string& message, uint32_t handle)
 	{

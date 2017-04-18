@@ -52,6 +52,7 @@ namespace OpcUaDB
 		bool execDirect(const std::string& statement);
 
 	  private:
+		bool describe(ColDescription& colDescription);
 		void logError(const std::string& message, uint32_t handle = 0);
 
 	    SQLHENV env_;
