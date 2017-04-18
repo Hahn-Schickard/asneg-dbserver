@@ -1,9 +1,9 @@
 ###########################
 # UaModeler Project File  #
-# Generated at 09.04.2017 #
+# Generated at 18.04.2017 #
 ###########################
 
-PROJECTNAME = DBServer
+PROJECTNAME = dbserver
 
 TEMPLATESET = ($TEMPLATES)/modeling/v1_0/t0/modeling.tt2set
 
