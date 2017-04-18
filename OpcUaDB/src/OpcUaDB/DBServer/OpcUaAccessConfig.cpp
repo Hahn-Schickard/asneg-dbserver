@@ -65,10 +65,28 @@ namespace OpcUaDB
 		}
 
 		// decode ident access
-		// FIXME:
+		boost::optional<Config> identAccess = config.getChild("IdentAccess.Server");
+		if (!identAccess) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", "DBModel.OpcUaAccess.IdentAccess.Server")
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+		if (!decodeIdentAccess(*identAccess)) {
+			return false;
+		}
 
 		// decode sql access
-		// FIXME:
+		boost::optional<Config> sqlAccess = config.getChild("SQLAccess.Server");
+		if (!sqlAccess) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", "DBModel.OpcUaAccess.SQLAccess.Server")
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+		if (!decodeSQLAccess(*sqlAccess)) {
+			return false;
+		}
 
 		return true;
 	}
