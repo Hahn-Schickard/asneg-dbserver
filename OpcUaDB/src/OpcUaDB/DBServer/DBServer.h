@@ -44,6 +44,8 @@ namespace OpcUaDB
 	  private:
 		bool getNamespaceInfo(void);
 		bool registerCalls(void);
+		bool registerIdentAccessCall(void);
+		bool registerSQLAccessCall(void);
 		void identAccessCall(ApplicationMethodContext* applicationMethodContext);
 		void sqlAccessCall(ApplicationMethodContext* applicationMethodContext);
 
