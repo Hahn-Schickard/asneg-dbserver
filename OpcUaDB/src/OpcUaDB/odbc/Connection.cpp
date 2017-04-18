@@ -147,6 +147,19 @@ namespace OpcUaDB
 			return false;
 		}
 
+		// get description for all columns in the result set
+		ColDescription::Vec colDescriptionVec;
+		if (!describe(colDescriptionVec)) {
+			SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
+			cleanup();
+			return false;
+		}
+
+		ColDescription::Vec::iterator it;
+		for (it = colDescriptionVec.begin(); it != colDescriptionVec.end(); it++) {
+			std::cout << "Col: " << it->colName_ << std::endl;
+		}
+
 		// free the sql statement handle
 		SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 		stmt_ = nullptr;
@@ -171,11 +184,24 @@ namespace OpcUaDB
 			&colDescription.decimalDigits_,
 			&colDescription.nullable_
 		);
-		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
-			logError("execDirect - SQLDescribeCol error", SQL_HANDLE_STMT);
-			SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
-			cleanup();
+		if (ret != SQL_SUCCESS) {
 			return false;
+		}
+
+		return true;
+	}
+
+	bool
+	Connection::describe(ColDescription::Vec& colDescriptionVec)
+	{
+		ColDescription colDescription;
+		colDescription.colNumber_ = 1;
+		colDescriptionVec.clear();
+
+		// get the description for all columns in the resultset
+		while (describe(colDescription)) {
+			colDescriptionVec.push_back(colDescription);
+			colDescription.colNumber_++;
 		}
 
 		return true;

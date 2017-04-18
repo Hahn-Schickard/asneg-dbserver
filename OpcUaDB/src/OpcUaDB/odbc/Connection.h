@@ -29,6 +29,8 @@ namespace OpcUaDB
 	class ColDescription
     {
       public:
+		typedef std::vector<ColDescription> Vec;
+
         SQLSMALLINT colNumber_;
         SQLCHAR colName_[80];
         SQLSMALLINT nameLen_;
@@ -53,6 +55,7 @@ namespace OpcUaDB
 
 	  private:
 		bool describe(ColDescription& colDescription);
+		bool describe(ColDescription::Vec& colDescriptionVec);
 		void logError(const std::string& message, uint32_t handle = 0);
 
 	    SQLHENV env_;
