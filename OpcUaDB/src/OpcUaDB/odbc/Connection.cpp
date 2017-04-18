@@ -59,9 +59,6 @@ namespace OpcUaDB
 		uint32_t columNumber = this->columnNumber();
 		uint32_t rowNumber = this->rowNumber();
 
-		std::cout << "col " << columNumber << std::endl;
-		std::cout << "row " << rowNumber << std::endl;
-
 		// output column description
 		for (uint32_t idx=0; idx<columNumber; idx++) {
 			if (idx != 0) os << ", ";
