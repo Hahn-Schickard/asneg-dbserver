@@ -326,8 +326,15 @@ namespace OpcUaDB
 	void
 	DBServer::accessCall(ApplicationMethodContext* applicationMethodContext)
 	{
-		std::cout << "call access call" << std::endl;
-		applicationMethodContext->statusCode_ = Success;
+		if (applicationMethodContext->methodNodeId_ == dbModelConfig_->opcUaAccessConfig().identAccess().nodeId()) {
+			identAccessCall(applicationMethodContext);
+			return;
+		}
+		else if (applicationMethodContext->methodNodeId_ == dbModelConfig_->opcUaAccessConfig().sqlAccess().nodeId()) {
+			sqlAccessCall(applicationMethodContext);
+			return;
+		}
+		applicationMethodContext->statusCode_ = BadNotSupported;
 	}
 }
 
