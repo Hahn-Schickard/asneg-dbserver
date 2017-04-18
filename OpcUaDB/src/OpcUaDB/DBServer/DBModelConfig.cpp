@@ -31,6 +31,7 @@ namespace OpcUaDB
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	DBModelConfig::DBModelConfig(void)
+	: databaseConfig_()
 	{
 	}
 
@@ -38,9 +39,27 @@ namespace OpcUaDB
 	{
 	}
 
+	DatabaseConfig&
+	DBModelConfig::databaseConfig(void)
+	{
+		return databaseConfig_;
+	}
+
 	bool
 	DBModelConfig::decode(Config& config)
 	{
+		// get database configuration
+		boost::optional<Config> child = config.getChild("Database");
+		if (!child) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", "DBModel.Database")
+				.parameter("ConfigFileName", config.configFileName());
+			return false;
+		}
+		if (!databaseConfig_.decode(*child)) {
+			return false;
+		}
+
 		return true;
 	}
 

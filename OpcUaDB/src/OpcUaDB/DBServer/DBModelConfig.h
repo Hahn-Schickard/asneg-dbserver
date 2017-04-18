@@ -19,6 +19,7 @@
 #define __OpcUaDB_DBModelConfig_h__
 
 #include "OpcUaStackCore/Base/ConfigXmlManager.h"
+#include "OpcUaDB/DBServer/DatabaseConfig.h"
 
 using namespace OpcUaStackCore;
 
@@ -31,9 +32,12 @@ namespace OpcUaDB
 		DBModelConfig(void);
 		~DBModelConfig(void);
 
+		DatabaseConfig& databaseConfig(void);
+
 		bool decode(Config& config);
 
 	  private:
+		DatabaseConfig databaseConfig_;
 	};
 
 }
