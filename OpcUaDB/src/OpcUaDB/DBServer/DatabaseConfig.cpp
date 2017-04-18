@@ -31,6 +31,7 @@ namespace OpcUaDB
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	DatabaseConfig::DatabaseConfig(void)
+	: name_("")
 	{
 	}
 
@@ -38,9 +39,26 @@ namespace OpcUaDB
 	{
 	}
 
+	std::string
+	DatabaseConfig::name(void)
+	{
+		return name_;
+	}
+
 	bool
 	DatabaseConfig::decode(Config& config)
 	{
+		bool success;
+
+		// get database name
+		success = config.getConfigParameter("Name", name_);
+		if (!success) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", "DBModel.Database.Name")
+				.parameter("ConfigFileName", config.configFileName());
+			return false;
+		}
+
 		return true;
 	}
 

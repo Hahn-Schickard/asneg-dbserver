@@ -31,9 +31,12 @@ namespace OpcUaDB
 		DatabaseConfig(void);
 		~DatabaseConfig(void);
 
+		std::string name(void);
+
 		bool decode(Config& config);
 
 	  private:
+		std::string name_;
 	};
 
 }
