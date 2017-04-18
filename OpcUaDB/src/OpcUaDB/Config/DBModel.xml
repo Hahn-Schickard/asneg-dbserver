@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DBModel Id="Client" xmlns="http://ASNeG.de/DBModel.xsd">
+
+  <Database>
+  
+    <Name>PostgreSQL TestData</Name>
+  
+  </Database>
+
+</DBModel>
