@@ -42,7 +42,7 @@ namespace OpcUaDB
 	}
 
 	uint32_t
-	ResultSet::colNumber(void)
+	ResultSet::columnNumber(void)
 	{
 		return colDescriptionVec_.size();
 	}
@@ -50,8 +50,36 @@ namespace OpcUaDB
 	uint32_t
 	ResultSet::rowNumber(void)
 	{
-		if (colNumber() == 0) return 0;
-		return tableData_.size() / colNumber();
+		return tableData_.size();
+	}
+
+	bool
+	ResultSet::out(std::ostream& os)
+	{
+		uint32_t columNumber = this->columnNumber();
+		uint32_t rowNumber = this->rowNumber();
+
+		std::cout << "col " << columNumber << std::endl;
+		std::cout << "row " << rowNumber << std::endl;
+
+		// output column description
+		for (uint32_t idx=0; idx<columNumber; idx++) {
+			if (idx != 0) os << ", ";
+			os << colDescriptionVec_[idx].colName_;
+		}
+		os << std::endl;
+
+		// output data
+		for (uint32_t row=0; row<rowNumber; row++) {
+
+			for (uint32_t col=0; col<columNumber; col++) {
+				if (col != 0) os << ", ";
+				os << tableData_[row][col];
+			}
+			os << std::endl;
+		}
+
+		return true;
 	}
 
 	// ------------------------------------------------------------------------
@@ -191,12 +219,27 @@ namespace OpcUaDB
 			cleanup();
 			return false;
 		}
+		resultSet.out(std::cout);
 
 		// free the sql statement handle
 		SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 		stmt_ = nullptr;
 
 		return true;
+	}
+
+	bool
+	Connection::getColData(uint32_t col, std::string& data)
+	{
+		SQLRETURN ret;
+		SQLCHAR buf[255] = {0};
+
+		ret = SQLGetData(stmt_, col, SQL_CHAR, buf, sizeof(buf), NULL);
+		if (ret == SQL_SUCCESS) {
+			data = std::string((char*)buf);
+			return true;
+		}
+		return false;
 	}
 
 	bool
@@ -210,6 +253,16 @@ namespace OpcUaDB
 		// read data from result set
 		resultSet.tableData_.clear();
 		while (SQLFetch(stmt_) == SQL_SUCCESS) {
+			std::vector<std::string> col;
+			std::string data;
+
+			uint32_t idx = 1;
+			while (getColData(idx, data)) {
+				col.push_back(data);
+				idx++;
+			}
+
+			resultSet.tableData_.push_back(col);
 		}
 
 		return true;

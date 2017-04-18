@@ -47,8 +47,9 @@ namespace OpcUaDB
 		ResultSet(void);
 		~ResultSet(void);
 
-		uint32_t colNumber(void);
+		uint32_t columnNumber(void);
 		uint32_t rowNumber(void);
+		bool out(std::ostream& os);
 
 		ColDescription::Vec colDescriptionVec_;
 		TableData tableData_;
@@ -68,6 +69,7 @@ namespace OpcUaDB
 		bool execDirect(const std::string& statement);
 
 	  private:
+		bool getColData(uint32_t col, std::string& data);
 		bool getResultSet(ResultSet& resultSet);
 		bool describe(ColDescription& colDescription);
 		bool describe(ColDescription::Vec& colDescriptionVec);
