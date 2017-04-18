@@ -18,6 +18,11 @@
 #ifndef __OpcUaDB_DBServer_h__
 #define __OpcUaDB_DBServer_h__
 
+#include "OpcUaStackServer/Application/ApplicationIf.h"
+#include "OpcUaDB/DBServer/DBModelConfig.h"
+
+using namespace OpcUaStackServer;
+
 namespace OpcUaDB
 {
 
@@ -27,11 +32,17 @@ namespace OpcUaDB
 		DBServer(void);
 		~DBServer(void);
 
+		void applicationServiceIf(ApplicationServiceIf* applicationServiceIf);
+		void dbModelConfig(DBModelConfig* dbModelConfig);
+
 		bool startup(void);
 		bool shutdown(void);
 
 	  private:
 		bool execSQLDirect(void);
+
+		ApplicationServiceIf* applicationServiceIf_;
+		DBModelConfig* dbModelConfig_;
 	};
 
 }

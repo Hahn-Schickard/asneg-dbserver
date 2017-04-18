@@ -88,7 +88,7 @@
     <Application>
       <Name>OpcUaDB</Name>  
       <Library>OpcUaDB</Library>
-      <Config>@CONF_DIR@/HistoryModel.xml</Config>
+      <Config>@CONF_DIR@/DBModel.xml</Config>
     </Application>
   </Applications>
  

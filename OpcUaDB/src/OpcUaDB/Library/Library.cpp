@@ -55,6 +55,9 @@ namespace OpcUaDB
 		//
 		Config::SPtr config;
         if (!configXmlManager_.registerConfiguration(applicationInfo()->configFileName(), config)) {
+        	Log(Error, "read DBModel configuration error")
+        		.parameter("ErrorMessage", configXmlManager_.errorMessage())
+        		.parameter("ConfigFileName", applicationInfo()->configFileName());
         	return false;
         }
         Log(Info, "read configuration file")
@@ -64,6 +67,7 @@ namespace OpcUaDB
         //
         // decode configuration
         //
+        std::cout << "XXX" << std::endl;
         boost::optional<Config> child = config->getChild("DBModel");
         if (!child) {
 			Log(Error, "element missing in config file")
@@ -79,9 +83,13 @@ namespace OpcUaDB
         //
 		// startup database server
         //
+        dbServer_.applicationServiceIf(&service());
+        dbServer_.dbModelConfig(&dbModelConfig_);
 		if (!dbServer_.startup()) {
 			return false;
 		}
+
+		Log(Info, "startup db server complete");
 		return true;
 	}
 

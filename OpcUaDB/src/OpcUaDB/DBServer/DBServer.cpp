@@ -24,11 +24,24 @@ namespace OpcUaDB
 {
 
 	DBServer::DBServer(void)
+	: applicationServiceIf_(nullptr)
 	{
 	}
 
 	DBServer::~DBServer(void)
 	{
+	}
+
+	void
+	DBServer::applicationServiceIf(ApplicationServiceIf* applicationServiceIf)
+	{
+		applicationServiceIf_ = applicationServiceIf;
+	}
+
+	void
+	DBServer::dbModelConfig(DBModelConfig* dbModelConfig)
+	{
+		dbModelConfig_ = dbModelConfig;
 	}
 
 	bool
