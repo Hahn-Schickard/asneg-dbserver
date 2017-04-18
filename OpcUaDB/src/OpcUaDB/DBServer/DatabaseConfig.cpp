@@ -16,7 +16,7 @@
  */
 
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaDB/DBServer/DataBaseConfig.h"
+#include "OpcUaDB/DBServer/DatabaseConfig.h"
 
 using namespace OpcUaStackCore;
 
@@ -26,20 +26,20 @@ namespace OpcUaDB
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	//
-	// class DataBaseConfig
+	// class DatabaseConfig
 	//
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
-	DataBaseConfig::DataBaseConfig(void)
+	DatabaseConfig::DatabaseConfig(void)
 	{
 	}
 
-	DataBaseConfig::~DataBaseConfig(void)
+	DatabaseConfig::~DatabaseConfig(void)
 	{
 	}
 
 	bool
-	DataBaseConfig::decode(Config& config)
+	DatabaseConfig::decode(Config& config)
 	{
 		return true;
 	}

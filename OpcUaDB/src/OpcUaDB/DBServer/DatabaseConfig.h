@@ -15,8 +15,8 @@
    Autor: Kai Huebl (kai@huebl-sgh.de)
  */
 
-#ifndef __OpcUaDB_DataBaseConfig_h__
-#define __OpcUaDB_DataBaseConfig_h__
+#ifndef __OpcUaDB_DatabaseConfig_h__
+#define __OpcUaDB_DatabaseConfig_h__
 
 #include "OpcUaStackCore/Base/ConfigXmlManager.h"
 
@@ -25,11 +25,11 @@ using namespace OpcUaStackCore;
 namespace OpcUaDB
 {
 
-	class DataBaseConfig
+	class DatabaseConfig
 	{
 	  public:
-		DataBaseConfig(void);
-		~DataBaseConfig(void);
+		DatabaseConfig(void);
+		~DatabaseConfig(void);
 
 		bool decode(Config& config);
 
