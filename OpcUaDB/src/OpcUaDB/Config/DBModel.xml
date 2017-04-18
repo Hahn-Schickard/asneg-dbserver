@@ -4,7 +4,23 @@
   <Database>
   
     <Name>PostgreSQL TestData</Name>
-  
+
   </Database>
+
+  <OpcUaAccess>
+		
+    <NamespaceUris>
+      <Uri>http://ASNeG.de/DBServer/</Uri>
+	</NamespaceUris>
+	
+	<SQLAccess Name="IdentAccessString">
+      <Server Service="Call" NodeId="ns=1;s=IdentAccessString"/>
+	</SQLAccess>
+	
+	<SQLAccess Name="SQLAccessString">
+      <Server Service="Call" NodeId="ns=1;s=SQLAccessString"/>
+	</SQLAccess>
+	
+  <OpcUaAccess>
 
 </DBModel>
