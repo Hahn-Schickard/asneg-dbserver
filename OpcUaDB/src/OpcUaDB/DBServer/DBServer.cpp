@@ -317,6 +317,41 @@ namespace OpcUaDB
 	void
 	DBServer::sqlAccessCall(ApplicationMethodContext* applicationMethodContext)
 	{
+		// check input arguments
+		if (applicationMethodContext->inputArguments_->size() != 1) {
+			Log(Error, "input argument size error in sql access call");
+			applicationMethodContext->statusCode_ = BadInvalidArgument;
+			return;
+		}
+
+		// get variant value
+		OpcUaVariant::SPtr value;
+		if (!applicationMethodContext->inputArguments_->get(0, value)) {
+			Log(Error, "variant value error in sql access call");
+			applicationMethodContext->statusCode_ = BadInvalidArgument;
+			return;
+		}
+		if (value->isArray()) {
+			Log(Error, "variant type error in sql access call");
+			applicationMethodContext->statusCode_ = BadInvalidArgument;
+			return;
+		}
+		if (value->variantType() != OpcUaBuildInType_OpcUaString) {
+			Log(Error, "variant type error in sql access call");
+			applicationMethodContext->statusCode_ = BadInvalidArgument;
+			return;
+		}
+
+		// get sql query
+		OpcUaString::SPtr sqlQuery;
+		sqlQuery = value->getSPtr<OpcUaString>();
+		if (sqlQuery.get() == nullptr) {
+			Log(Error, "sql query error in sql access call");
+			applicationMethodContext->statusCode_ = BadInvalidArgument;
+			return;
+		}
+
+
 		std::cout << "call sql access call" << std::endl;
 		// FIXME: todo
 
