@@ -57,7 +57,7 @@ namespace OpcUaDB
 			ResultSet& resultSet,
 			std::string& statusCode,
 			OpcUaVariant::SPtr& header,
-			OpcUaStringArray::SPtr& data);
+			OpcUaVariant::SPtr& data);
 
 		NamespaceMap namespaceMap_;
 		ApplicationServiceIf* applicationServiceIf_;

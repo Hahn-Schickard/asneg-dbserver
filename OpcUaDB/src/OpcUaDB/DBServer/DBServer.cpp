@@ -101,7 +101,7 @@ namespace OpcUaDB
 		resultSet.out(std::cout);
 		std::string statusCode;
 		OpcUaVariant::SPtr header = constructSPtr<OpcUaVariant>();
-		OpcUaStringArray::SPtr data = constructSPtr<OpcUaStringArray>();
+		OpcUaVariant::SPtr data = constructSPtr<OpcUaVariant>();
 
 		if (!createResultSet(resultSet, statusCode, header, data)) {
 			connection.disconnect();
@@ -116,9 +116,7 @@ namespace OpcUaDB
 		variant->set(sc);
 		outputArguments->set(0, variant);
 		outputArguments->set(1, header);
-		variant = constructSPtr<OpcUaVariant>();
-		variant->set(data);
-		outputArguments->set(2, variant);
+		outputArguments->set(2, data);
 
 		std::cout << "__" << std::endl;
 		outputArguments->out(std::cout);
@@ -138,29 +136,32 @@ namespace OpcUaDB
 		ResultSet& resultSet,
 		std::string& statusCode,
 		OpcUaVariant::SPtr& header,
-		OpcUaStringArray::SPtr& data
+		OpcUaVariant::SPtr& data
 	)
 	{
 		// create header
-		OpcUaVariantValue::Vec variantVec;
+		OpcUaVariantValue::Vec variantVec1;
 		for (uint32_t idx=0; idx<resultSet.colDescriptionVec_.size(); idx++) {
 			OpcUaString::SPtr value = constructSPtr<OpcUaString>();
 			value->value((char*)resultSet.colDescriptionVec_[idx].colName_);
 			OpcUaVariantValue v;
 			v.variant(value);
-			variantVec.push_back(v);
+			variantVec1.push_back(v);
 		}
-		header->variant(variantVec);
+		header->variant(variantVec1);
 
 		// create data
-		data->resize(resultSet.tableData_.size() * resultSet.colDescriptionVec_.size());
+		OpcUaVariantValue::Vec variantVec2;
 		for (uint32_t i=0; i<resultSet.tableData_.size(); i++) {
 			for (uint32_t j=0; j<resultSet.colDescriptionVec_.size(); j++) {
-				OpcUaString::SPtr dataString = constructSPtr<OpcUaString>();
-				dataString->value(resultSet.tableData_[i][j]);
-				data->push_back(dataString);
+				OpcUaString::SPtr value = constructSPtr<OpcUaString>();
+				value->value(resultSet.tableData_[i][j]);
+				OpcUaVariantValue v;
+				v.variant(value);
+				variantVec2.push_back(v);
 			}
 		}
+		data->variant(variantVec2);
 
 		statusCode = "Success";
 		return true;
