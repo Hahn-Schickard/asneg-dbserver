@@ -131,14 +131,8 @@ namespace OpcUaDB
 		OpcUaVariant::SPtr statusCode = constructSPtr<OpcUaVariant>();
 		statusCode->set(constructSPtr<OpcUaString>(resultCode));
 
-		OpcUaVariant::SPtr header = constructSPtr<OpcUaVariant>();
-
-		OpcUaVariant::SPtr data = constructSPtr<OpcUaVariant>();
-
-		outputArguments->resize(3);
+		outputArguments->resize(1);
 		outputArguments->set(0, statusCode);
-		outputArguments->set(1, header);
-		outputArguments->set(2, data);
 
 		return true;
 	}
@@ -438,7 +432,7 @@ namespace OpcUaDB
 		}
 
 		// get parameter
-		std::vector<std::string> parameter;
+		std::vector<std::string> parameterVec;
 		if (valueParameter->arrayLength() != 0) {
 			OpcUaVariantValue::Vec::iterator it;
 			OpcUaVariantValue::Vec variantValueVec = valueParameter->variant();
@@ -450,15 +444,37 @@ namespace OpcUaDB
 					applicationMethodContext->statusCode_ = BadInvalidArgument;
 					return;
 				}
-				parameter.push_back(para->value());
+				parameterVec.push_back(para->value());
 			}
 		}
 
 		// map id to sql query
+		OpcUaAccessConfig::SQLQueryMap& map = dbModelConfig_->opcUaAccessConfig().sqlQueryMap();
+		OpcUaAccessConfig::SQLQueryMap::iterator it;
+		it = map.find(identifier->value().c_str());
+		if (it == map.end()) {
+			createResultError("Error - query id unknown", applicationMethodContext->outputArguments_);
+			applicationMethodContext->statusCode_ = Success;
+			return;
+		}
+		std::string sqlQuery = it->second;
 
 
+		// subst sql query
+		for (uint32_t idx=0; idx<parameterVec.size(); idx++) {
+			std::stringstream ss;
+			ss << "%" << (uint32_t)(idx+1);
+			boost::replace_all(sqlQuery, ss.str(), parameterVec[idx]);
+		}
+		std::cout << ":::" << sqlQuery << std::endl;
 
-		// FIXME; todo
+		// execute sql query
+		if (!execSQLDirect(sqlQuery, applicationMethodContext->outputArguments_)) {
+			Log(Error, "database error");
+			applicationMethodContext->statusCode_ = BadInternalError;
+			return;
+		}
+
 		applicationMethodContext->statusCode_ = Success;
 	}
 
