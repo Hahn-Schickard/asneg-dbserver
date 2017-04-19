@@ -56,7 +56,7 @@ namespace OpcUaDB
 		bool createResultSet(
 			ResultSet& resultSet,
 			std::string& statusCode,
-			OpcUaStringArray::SPtr& header,
+			OpcUaVariant::SPtr& header,
 			OpcUaStringArray::SPtr& data);
 
 		NamespaceMap namespaceMap_;

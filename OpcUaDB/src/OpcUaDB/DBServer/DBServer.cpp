@@ -100,7 +100,7 @@ namespace OpcUaDB
 		ResultSet& resultSet = connection.resultSet();
 		resultSet.out(std::cout);
 		std::string statusCode;
-		OpcUaStringArray::SPtr header = constructSPtr<OpcUaStringArray>();
+		OpcUaVariant::SPtr header = constructSPtr<OpcUaVariant>();
 		OpcUaStringArray::SPtr data = constructSPtr<OpcUaStringArray>();
 
 		if (!createResultSet(resultSet, statusCode, header, data)) {
@@ -115,20 +115,7 @@ namespace OpcUaDB
 		variant = constructSPtr<OpcUaVariant>();
 		variant->set(sc);
 		outputArguments->set(0, variant);
-		variant = constructSPtr<OpcUaVariant>();
-		OpcUaVariantValue::Vec variantVec;
-		for (uint32_t idx=0; idx<header->size(); idx++) {
-			OpcUaString::SPtr x = constructSPtr<OpcUaString>();
-			x->value("xx");
-			OpcUaVariantValue v;
-			v.variant(x);
-			variantVec.push_back(v);
-		}
-		variant->variant(variantVec);
-		std::cout << "__" << std::endl;
-		variant->out(std::cout);
-		std::cout << "__" << std::endl;
-		outputArguments->set(1, variant);
+		outputArguments->set(1, header);
 		variant = constructSPtr<OpcUaVariant>();
 		variant->set(data);
 		outputArguments->set(2, variant);
@@ -150,17 +137,20 @@ namespace OpcUaDB
 	DBServer::createResultSet(
 		ResultSet& resultSet,
 		std::string& statusCode,
-		OpcUaStringArray::SPtr& header,
+		OpcUaVariant::SPtr& header,
 		OpcUaStringArray::SPtr& data
 	)
 	{
 		// create header
-		header->resize(resultSet.colDescriptionVec_.size());
+		OpcUaVariantValue::Vec variantVec;
 		for (uint32_t idx=0; idx<resultSet.colDescriptionVec_.size(); idx++) {
-			OpcUaString::SPtr headerString = constructSPtr<OpcUaString>();
-			headerString->value((char*)resultSet.colDescriptionVec_[idx].colName_);
-			header->set(idx, headerString);
+			OpcUaString::SPtr value = constructSPtr<OpcUaString>();
+			value->value((char*)resultSet.colDescriptionVec_[idx].colName_);
+			OpcUaVariantValue v;
+			v.variant(value);
+			variantVec.push_back(v);
 		}
+		header->variant(variantVec);
 
 		// create data
 		data->resize(resultSet.tableData_.size() * resultSet.colDescriptionVec_.size());
