@@ -83,7 +83,8 @@ namespace OpcUaDB
 		connection.name(dbModelConfig_->databaseConfig().name());
 		success = connection.connect();
 		if (!success) {
-			return false;
+			createResultError("Error - database connection", outputArguments);
+			return true;
 		}
 
 		// execute sql statement
@@ -92,8 +93,9 @@ namespace OpcUaDB
 		if (!success) {
 			Log(Error, "sql query error")
 			    .parameter("SQLQuery", sqlQuery);
+			createResultError("Error - database access", outputArguments);
 			connection.disconnect();
-			return false;
+			return true;
 		}
 
 		// get result set
@@ -116,6 +118,27 @@ namespace OpcUaDB
 		if (!success) {
 			return false;
 		}
+
+		return true;
+	}
+
+	bool
+	DBServer::createResultError(
+		const std::string& resultCode,
+		OpcUaVariantArray::SPtr& outputArguments
+	)
+	{
+		OpcUaVariant::SPtr statusCode = constructSPtr<OpcUaVariant>();
+		statusCode->set(constructSPtr<OpcUaString>(resultCode));
+
+		OpcUaVariant::SPtr header = constructSPtr<OpcUaVariant>();
+
+		OpcUaVariant::SPtr data = constructSPtr<OpcUaVariant>();
+
+		outputArguments->resize(3);
+		outputArguments->set(0, statusCode);
+		outputArguments->set(1, header);
+		outputArguments->set(2, data);
 
 		return true;
 	}
@@ -431,7 +454,8 @@ namespace OpcUaDB
 			}
 		}
 
-		// todo
+		// map id to sql query
+
 
 
 		// FIXME; todo

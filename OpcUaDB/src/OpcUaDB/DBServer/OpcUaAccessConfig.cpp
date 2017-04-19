@@ -171,7 +171,7 @@ namespace OpcUaDB
 			// get sql query
 			std::string sqlQuery = it->getValue();
 
-			std::cout << " " << id << " " << sqlQuery << std::endl;
+			sqlQueryMap_.insert(std::make_pair(id, sqlQuery));
 		}
 
 		return true;
