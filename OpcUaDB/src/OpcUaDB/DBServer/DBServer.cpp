@@ -466,7 +466,6 @@ namespace OpcUaDB
 			ss << "%" << (uint32_t)(idx+1);
 			boost::replace_all(sqlQuery, ss.str(), parameterVec[idx]);
 		}
-		std::cout << ":::" << sqlQuery << std::endl;
 
 		// execute sql query
 		if (!execSQLDirect(sqlQuery, applicationMethodContext->outputArguments_)) {
