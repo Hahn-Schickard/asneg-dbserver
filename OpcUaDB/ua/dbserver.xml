@@ -13,7 +13,7 @@
     </Aliases>
     <Extensions>
         <Extension>
-            <ModelInfo Tool="UaModeler" Hash="ehuz1nq4RY6RPiaJGRYSZw==" Version="1.4.1"/>
+            <ModelInfo Tool="UaModeler" Hash="w7ditr4/1TxcROLQnJtxUA==" Version="1.4.1"/>
         </Extension>
     </Extensions>
     <UAObjectType NodeId="ns=1;i=1002" BrowseName="1:DBAccess">
@@ -158,7 +158,7 @@
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7002" ValueRank="1" NodeId="ns=1;i=6004" ArrayDimensions="2" BrowseName="OutputArguments">
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;i=7002" ValueRank="1" NodeId="ns=1;i=6004" ArrayDimensions="3" BrowseName="OutputArguments">
         <DisplayName>OutputArguments</DisplayName>
         <References>
             <Reference ReferenceType="HasModellingRule">i=78</Reference>
@@ -189,11 +189,27 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>ResultParameter</uax:Name>
+                            <uax:Name>Header</uax:Name>
                             <uax:DataType>
-                                <uax:Identifier>i=23</uax:Identifier>
+                                <uax:Identifier>i=12</uax:Identifier>
                             </uax:DataType>
-                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ValueRank>1</uax:ValueRank>
+                            <uax:ArrayDimensions></uax:ArrayDimensions>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>Data</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=12</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>1</uax:ValueRank>
                             <uax:ArrayDimensions></uax:ArrayDimensions>
                             <uax:Description/>
                         </uax:Argument>
@@ -340,7 +356,7 @@
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;s=SQLAccessString" ValueRank="1" NodeId="ns=1;i=6008" ArrayDimensions="2" BrowseName="OutputArguments">
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;s=SQLAccessString" ValueRank="1" NodeId="ns=1;i=6008" ArrayDimensions="3" BrowseName="OutputArguments">
         <DisplayName>OutputArguments</DisplayName>
         <References>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
@@ -370,11 +386,27 @@
                     </uax:TypeId>
                     <uax:Body>
                         <uax:Argument>
-                            <uax:Name>ResultParameter</uax:Name>
+                            <uax:Name>Header</uax:Name>
                             <uax:DataType>
-                                <uax:Identifier>i=23</uax:Identifier>
+                                <uax:Identifier>i=12</uax:Identifier>
                             </uax:DataType>
-                            <uax:ValueRank>-1</uax:ValueRank>
+                            <uax:ValueRank>1</uax:ValueRank>
+                            <uax:ArrayDimensions></uax:ArrayDimensions>
+                            <uax:Description/>
+                        </uax:Argument>
+                    </uax:Body>
+                </uax:ExtensionObject>
+                <uax:ExtensionObject>
+                    <uax:TypeId>
+                        <uax:Identifier>i=297</uax:Identifier>
+                    </uax:TypeId>
+                    <uax:Body>
+                        <uax:Argument>
+                            <uax:Name>Data</uax:Name>
+                            <uax:DataType>
+                                <uax:Identifier>i=12</uax:Identifier>
+                            </uax:DataType>
+                            <uax:ValueRank>1</uax:ValueRank>
                             <uax:ArrayDimensions></uax:ArrayDimensions>
                             <uax:Description/>
                         </uax:Argument>
