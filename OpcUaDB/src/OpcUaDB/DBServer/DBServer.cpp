@@ -415,7 +415,23 @@ namespace OpcUaDB
 		}
 
 		// get parameter
+		std::vector<std::string> parameter;
+		if (valueParameter->arrayLength() != 0) {
+			OpcUaVariantValue::Vec::iterator it;
+			OpcUaVariantValue::Vec variantValueVec = valueParameter->variant();
+			for (it=variantValueVec.begin(); it!=variantValueVec.end(); it++) {
+				OpcUaVariantValue vv = *it;
+				OpcUaString::SPtr para = vv.variantSPtr<OpcUaString>();
+				if (para.get() == nullptr) {
+					Log(Error, "parameter error in ident access call");
+					applicationMethodContext->statusCode_ = BadInvalidArgument;
+					return;
+				}
+				parameter.push_back(para->value());
+			}
+		}
 
+		// todo
 
 
 		// FIXME; todo
