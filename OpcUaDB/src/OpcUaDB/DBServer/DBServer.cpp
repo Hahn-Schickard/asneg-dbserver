@@ -106,6 +106,7 @@ namespace OpcUaDB
 			connection.disconnect();
 			return false;
 		}
+		outputArguments->resize(3);
 		outputArguments->set(0, statusCode);
 		outputArguments->set(1, header);
 		outputArguments->set(2, data);
@@ -359,9 +360,42 @@ namespace OpcUaDB
 	void
 	DBServer::identAccessCall(ApplicationMethodContext* applicationMethodContext)
 	{
-		std::cout << "call ident access call" << std::endl;
-		// FIXME: todo
+		// check input arguments
+		if (applicationMethodContext->inputArguments_->size() != 2) {
+			Log(Error, "input argument size error in ident access call");
+			applicationMethodContext->statusCode_ = BadInvalidArgument;
+			return;
+		}
 
+		// get variant value (identifier)
+		OpcUaVariant::SPtr value;
+		if (!applicationMethodContext->inputArguments_->get(0, value)) {
+			Log(Error, "variant value error in ident access call");
+			applicationMethodContext->statusCode_ = BadInvalidArgument;
+			return;
+		}
+		if (value->isArray()) {
+			Log(Error, "variant type error in ident access call");
+			applicationMethodContext->statusCode_ = BadInvalidArgument;
+			return;
+		}
+		if (value->variantType() != OpcUaBuildInType_OpcUaString) {
+			Log(Error, "variant type error in ident access call");
+			applicationMethodContext->statusCode_ = BadInvalidArgument;
+			return;
+		}
+
+		// get identifier
+		OpcUaString::SPtr identifier;
+		identifier = value->getSPtr<OpcUaString>();
+		if (identifier.get() == nullptr) {
+			Log(Error, "identifier error in ident access call");
+			applicationMethodContext->statusCode_ = BadInvalidArgument;
+			return;
+		}
+
+
+		// FIXME; todo
 		applicationMethodContext->statusCode_ = Success;
 	}
 
@@ -375,7 +409,7 @@ namespace OpcUaDB
 			return;
 		}
 
-		// get variant value
+		// get variant value (sql query)
 		OpcUaVariant::SPtr value;
 		if (!applicationMethodContext->inputArguments_->get(0, value)) {
 			Log(Error, "variant value error in sql access call");
