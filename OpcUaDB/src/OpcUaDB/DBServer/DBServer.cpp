@@ -368,31 +368,54 @@ namespace OpcUaDB
 		}
 
 		// get variant value (identifier)
-		OpcUaVariant::SPtr value;
-		if (!applicationMethodContext->inputArguments_->get(0, value)) {
-			Log(Error, "variant value error in ident access call");
+		OpcUaVariant::SPtr valueIdentifier;
+		if (!applicationMethodContext->inputArguments_->get(0, valueIdentifier)) {
+			Log(Error, "variant identifier value error in ident access call");
 			applicationMethodContext->statusCode_ = BadInvalidArgument;
 			return;
 		}
-		if (value->isArray()) {
-			Log(Error, "variant type error in ident access call");
+		if (valueIdentifier->isArray()) {
+			Log(Error, "variant identifier type error in ident access call");
 			applicationMethodContext->statusCode_ = BadInvalidArgument;
 			return;
 		}
-		if (value->variantType() != OpcUaBuildInType_OpcUaString) {
-			Log(Error, "variant type error in ident access call");
+		if (valueIdentifier->variantType() != OpcUaBuildInType_OpcUaString) {
+			Log(Error, "variant identifier type error in ident access call");
 			applicationMethodContext->statusCode_ = BadInvalidArgument;
 			return;
 		}
 
 		// get identifier
 		OpcUaString::SPtr identifier;
-		identifier = value->getSPtr<OpcUaString>();
+		identifier = valueIdentifier->getSPtr<OpcUaString>();
 		if (identifier.get() == nullptr) {
 			Log(Error, "identifier error in ident access call");
 			applicationMethodContext->statusCode_ = BadInvalidArgument;
 			return;
 		}
+
+		// get variant value (parameter)
+		OpcUaVariant::SPtr valueParameter;
+		if (!applicationMethodContext->inputArguments_->get(1, valueParameter)) {
+			Log(Error, "variant parameter value error in ident access call");
+			applicationMethodContext->statusCode_ = BadInvalidArgument;
+			return;
+		}
+		if (!valueParameter->isArray()) {
+			Log(Error, "variant parameter type error in ident access call");
+			applicationMethodContext->statusCode_ = BadInvalidArgument;
+			return;
+		}
+		if (valueParameter->variantType() != OpcUaBuildInType_OpcUaString) {
+			if (valueParameter->arrayLength() != 0) {
+				Log(Error, "variant parameter type error in ident access call");
+				applicationMethodContext->statusCode_ = BadInvalidArgument;
+				return;
+			}
+		}
+
+		// get parameter
+
 
 
 		// FIXME; todo
