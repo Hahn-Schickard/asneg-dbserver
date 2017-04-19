@@ -79,6 +79,13 @@ namespace OpcUaDB
 		return true;
 	}
 
+	void
+	ResultSet::clear(void)
+	{
+		colDescriptionVec_.clear();
+		tableData_.clear();
+	}
+
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	//
@@ -91,6 +98,7 @@ namespace OpcUaDB
 	, env_(nullptr)
 	, dbc_(nullptr)
 	, stmt_(nullptr)
+	, resultSet_()
 	{
 	}
 
@@ -158,6 +166,12 @@ namespace OpcUaDB
 		name_ = name;
 	}
 
+	ResultSet&
+	Connection::resultSet(void)
+	{
+		return resultSet_;
+	}
+
 	bool
 	Connection::connect(void)
 	{
@@ -223,13 +237,12 @@ namespace OpcUaDB
 		}
 
 		// get data from result set
-		ResultSet resultSet;
-		if (!getResultSet(resultSet)) {
+		resultSet_.clear();
+		if (!getResultSet(resultSet_)) {
 			SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 			cleanup();
 			return false;
 		}
-		resultSet.out(std::cout);
 
 		// free the sql statement handle
 		SQLFreeHandle(SQL_HANDLE_STMT, stmt_);

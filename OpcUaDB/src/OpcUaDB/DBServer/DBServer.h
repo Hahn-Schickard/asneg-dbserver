@@ -51,7 +51,7 @@ namespace OpcUaDB
 		void sqlAccessCall(ApplicationMethodContext* applicationMethodContext);
 		void accessCall(ApplicationMethodContext* applicationMethodContext);
 
-		bool execSQLDirect(void);
+		bool execSQLDirect(const std::string& sqlQuery, OpcUaVariantArray::SPtr& outputArguments);
 
 		NamespaceMap namespaceMap_;
 		ApplicationServiceIf* applicationServiceIf_;

@@ -65,7 +65,6 @@ namespace OpcUaDB
 			return false;
 		}
 
-		execSQLDirect();
 		return true;
 	}
 
@@ -76,7 +75,7 @@ namespace OpcUaDB
 	}
 
 	bool
-	DBServer::execSQLDirect(void)
+	DBServer::execSQLDirect(const std::string& sqlQuery, OpcUaVariantArray::SPtr& outputArguments)
 	{
 		bool success;
 		Connection connection;
@@ -89,11 +88,18 @@ namespace OpcUaDB
 		}
 
 		// execute sql statement
-		success = connection.execDirect("select * from \"TestData\"");
+		// select * from \"TestData\"
+		success = connection.execDirect(sqlQuery);
 		if (!success) {
+			Log(Error, "sql query error")
+			    .parameter("SQLQuery", sqlQuery);
 			connection.disconnect();
 			return false;
 		}
+
+		// get result set
+		ResultSet& resultSet = connection.resultSet();
+		resultSet.out(std::cout);
 
 		// disconnect to database
 		success = connection.disconnect();
@@ -101,7 +107,6 @@ namespace OpcUaDB
 			return false;
 		}
 
-		std::cout << "sql query success..." << std::endl;
 		return true;
 	}
 
@@ -351,10 +356,12 @@ namespace OpcUaDB
 			return;
 		}
 
-
-		std::cout << "call sql access call" << std::endl;
-		// FIXME: todo
-
+		// execute sql query
+		if (!execSQLDirect(sqlQuery->value(), applicationMethodContext->outputArguments_)) {
+			Log(Error, "database error");
+			applicationMethodContext->statusCode_ = BadInternalError;
+			return;
+		}
 		applicationMethodContext->statusCode_ = Success;
 	}
 

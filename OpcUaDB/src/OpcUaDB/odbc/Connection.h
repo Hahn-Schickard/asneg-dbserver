@@ -50,6 +50,7 @@ namespace OpcUaDB
 		uint32_t columnNumber(void);
 		uint32_t rowNumber(void);
 		bool out(std::ostream& os);
+		void clear(void);
 
 		ColDescription::Vec colDescriptionVec_;
 		TableData tableData_;
@@ -66,14 +67,15 @@ namespace OpcUaDB
 
 		std::string name(void);
 		void name(const std::string& name);
+		ResultSet& resultSet(void);
 
 		bool connect(void);
 		bool disconnect(void);
 		bool execDirect(const std::string& statement);
 
 	  private:
-		bool getColData(uint32_t col, std::string& data);
 		bool getResultSet(ResultSet& resultSet);
+		bool getColData(uint32_t col, std::string& data);
 		bool describe(ColDescription& colDescription);
 		bool describe(ColDescription::Vec& colDescriptionVec);
 		void logError(const std::string& message, uint32_t handle = 0);
@@ -82,6 +84,8 @@ namespace OpcUaDB
 	    SQLHENV env_;
 	    SQLHDBC dbc_;
 	    HSTMT stmt_;
+
+	    ResultSet resultSet_;
 	};
 
 }
