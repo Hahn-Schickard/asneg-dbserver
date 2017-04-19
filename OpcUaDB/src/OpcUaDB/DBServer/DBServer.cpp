@@ -19,7 +19,6 @@
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaStackServer/ServiceSetApplication/ApplicationService.h"
 #include "OpcUaDB/DBServer/DBServer.h"
-#include "OpcUaDB/odbc/Connection.h"
 
 using namespace OpcUaStackServer;
 
@@ -88,7 +87,7 @@ namespace OpcUaDB
 		}
 
 		// execute sql statement
-		// select * from \"TestData\"
+		// select * from "TestData"
 		success = connection.execDirect(sqlQuery);
 		if (!success) {
 			Log(Error, "sql query error")
@@ -100,6 +99,23 @@ namespace OpcUaDB
 		// get result set
 		ResultSet& resultSet = connection.resultSet();
 		resultSet.out(std::cout);
+		OpcUaDataValue::SPtr dataValue = constructSPtr<OpcUaDataValue>();
+		std::string statusCode;
+		if (!createResultSet(resultSet, statusCode, dataValue)) {
+			connection.disconnect();
+			return false;
+		}
+		OpcUaString::SPtr sc = constructSPtr<OpcUaString>();
+		sc->value(statusCode);
+
+		OpcUaVariant::SPtr variant;
+		outputArguments->resize(2);
+		variant = constructSPtr<OpcUaVariant>();
+		variant->set(sc);
+		outputArguments->set(0, variant);
+		variant = constructSPtr<OpcUaVariant>();
+		variant->set(dataValue);
+		outputArguments->set(1, variant);
 
 		// disconnect to database
 		success = connection.disconnect();
@@ -107,6 +123,14 @@ namespace OpcUaDB
 			return false;
 		}
 
+		return true;
+	}
+
+	bool
+	DBServer::createResultSet(ResultSet& resultSet, std::string& statusCode, OpcUaDataValue::SPtr& dataValue)
+	{
+		// FIXME: todo
+		statusCode = "Success";
 		return true;
 	}
 
@@ -362,6 +386,10 @@ namespace OpcUaDB
 			applicationMethodContext->statusCode_ = BadInternalError;
 			return;
 		}
+
+		std::cout << "..." << applicationMethodContext->outputArguments_->size() << std::endl;
+		applicationMethodContext->outputArguments_->out(std::cout);
+		std::cout << "..." << std::endl;
 		applicationMethodContext->statusCode_ = Success;
 	}
 

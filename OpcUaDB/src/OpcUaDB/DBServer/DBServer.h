@@ -21,6 +21,7 @@
 #include "OpcUaStackCore/Application/ApplicationMethodContext.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaDB/DBServer/DBModelConfig.h"
+#include "OpcUaDB/odbc/Connection.h"
 
 using namespace OpcUaStackServer;
 
@@ -52,6 +53,7 @@ namespace OpcUaDB
 		void accessCall(ApplicationMethodContext* applicationMethodContext);
 
 		bool execSQLDirect(const std::string& sqlQuery, OpcUaVariantArray::SPtr& outputArguments);
+		bool createResultSet(ResultSet& resultSet, std::string& statusCode, OpcUaDataValue::SPtr& dataValue);
 
 		NamespaceMap namespaceMap_;
 		ApplicationServiceIf* applicationServiceIf_;
