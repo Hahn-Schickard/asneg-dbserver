@@ -98,8 +98,7 @@ namespace OpcUaDB
 
 		// get result set
 		ResultSet& resultSet = connection.resultSet();
-		resultSet.out(std::cout);
-		std::string statusCode;
+		OpcUaVariant::SPtr statusCode = constructSPtr<OpcUaVariant>();
 		OpcUaVariant::SPtr header = constructSPtr<OpcUaVariant>();
 		OpcUaVariant::SPtr data = constructSPtr<OpcUaVariant>();
 
@@ -107,20 +106,9 @@ namespace OpcUaDB
 			connection.disconnect();
 			return false;
 		}
-		OpcUaString::SPtr sc = constructSPtr<OpcUaString>();
-		sc->value(statusCode);
-
-		OpcUaVariant::SPtr variant;
-		outputArguments->resize(3);
-		variant = constructSPtr<OpcUaVariant>();
-		variant->set(sc);
-		outputArguments->set(0, variant);
+		outputArguments->set(0, statusCode);
 		outputArguments->set(1, header);
 		outputArguments->set(2, data);
-
-		std::cout << "__" << std::endl;
-		outputArguments->out(std::cout);
-		std::cout << "__" << std::endl;
 
 		// disconnect to database
 		success = connection.disconnect();
@@ -134,7 +122,7 @@ namespace OpcUaDB
 	bool
 	DBServer::createResultSet(
 		ResultSet& resultSet,
-		std::string& statusCode,
+		OpcUaVariant::SPtr& statusCode,
 		OpcUaVariant::SPtr& header,
 		OpcUaVariant::SPtr& data
 	)
@@ -163,7 +151,8 @@ namespace OpcUaDB
 		}
 		data->variant(variantVec2);
 
-		statusCode = "Success";
+		// create status code
+		statusCode->set(constructSPtr<OpcUaString>("Success"));
 		return true;
 	}
 
@@ -420,9 +409,6 @@ namespace OpcUaDB
 			return;
 		}
 
-		std::cout << "..." << applicationMethodContext->outputArguments_->size() << std::endl;
-		applicationMethodContext->outputArguments_->out(std::cout);
-		std::cout << "..." << std::endl;
 		applicationMethodContext->statusCode_ = Success;
 	}
 
