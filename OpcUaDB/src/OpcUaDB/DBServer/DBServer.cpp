@@ -99,9 +99,11 @@ namespace OpcUaDB
 		// get result set
 		ResultSet& resultSet = connection.resultSet();
 		resultSet.out(std::cout);
-		OpcUaDataValue::SPtr dataValue = constructSPtr<OpcUaDataValue>();
 		std::string statusCode;
-		if (!createResultSet(resultSet, statusCode, dataValue)) {
+		OpcUaStringArray::SPtr header = constructSPtr<OpcUaStringArray>();
+		OpcUaStringArray::SPtr data = constructSPtr<OpcUaStringArray>();
+
+		if (!createResultSet(resultSet, statusCode, header, data)) {
 			connection.disconnect();
 			return false;
 		}
@@ -109,13 +111,15 @@ namespace OpcUaDB
 		sc->value(statusCode);
 
 		OpcUaVariant::SPtr variant;
-		outputArguments->resize(2);
+		outputArguments->resize(3);
 		variant = constructSPtr<OpcUaVariant>();
 		variant->set(sc);
 		outputArguments->set(0, variant);
 		variant = constructSPtr<OpcUaVariant>();
-		variant->set(dataValue);
+		variant->set(header);
 		outputArguments->set(1, variant);
+		variant->set(data);
+		outputArguments->set(2, variant);
 
 		// disconnect to database
 		success = connection.disconnect();
@@ -127,7 +131,12 @@ namespace OpcUaDB
 	}
 
 	bool
-	DBServer::createResultSet(ResultSet& resultSet, std::string& statusCode, OpcUaDataValue::SPtr& dataValue)
+	DBServer::createResultSet(
+		ResultSet& resultSet,
+		std::string& statusCode,
+		OpcUaStringArray::SPtr& header,
+		OpcUaStringArray::SPtr& data
+	)
 	{
 		// FIXME: todo
 		statusCode = "Success";
