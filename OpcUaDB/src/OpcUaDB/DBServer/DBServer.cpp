@@ -116,10 +116,26 @@ namespace OpcUaDB
 		variant->set(sc);
 		outputArguments->set(0, variant);
 		variant = constructSPtr<OpcUaVariant>();
-		variant->set(header);
+		OpcUaVariantValue::Vec variantVec;
+		for (uint32_t idx=0; idx<header->size(); idx++) {
+			OpcUaString::SPtr x = constructSPtr<OpcUaString>();
+			x->value("xx");
+			OpcUaVariantValue v;
+			v.variant(x);
+			variantVec.push_back(v);
+		}
+		variant->variant(variantVec);
+		std::cout << "__" << std::endl;
+		variant->out(std::cout);
+		std::cout << "__" << std::endl;
 		outputArguments->set(1, variant);
+		variant = constructSPtr<OpcUaVariant>();
 		variant->set(data);
 		outputArguments->set(2, variant);
+
+		std::cout << "__" << std::endl;
+		outputArguments->out(std::cout);
+		std::cout << "__" << std::endl;
 
 		// disconnect to database
 		success = connection.disconnect();
