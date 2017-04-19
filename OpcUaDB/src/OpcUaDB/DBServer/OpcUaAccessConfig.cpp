@@ -34,6 +34,7 @@ namespace OpcUaDB
 	: namespaceUris_()
 	, identAccess_()
 	, sqlAccess_()
+	, sqlQueryMap_()
 	{
 	}
 
@@ -65,6 +66,12 @@ namespace OpcUaDB
 		return sqlAccess_;
 	}
 
+	OpcUaAccessConfig::SQLQueryMap&
+	OpcUaAccessConfig::sqlQueryMap(void)
+	{
+		return sqlQueryMap_;
+	}
+
 	bool
 	OpcUaAccessConfig::decode(Config& config)
 	{
@@ -83,10 +90,10 @@ namespace OpcUaDB
 		}
 
 		// decode ident access
-		boost::optional<Config> identAccess = config.getChild("IdentAccess.Server");
+		boost::optional<Config> identAccess = config.getChild("IdentAccess");
 		if (!identAccess) {
 			Log(Error, "element missing in config file")
-				.parameter("Element", "DBModel.OpcUaAccess.IdentAccess.Server")
+				.parameter("Element", "DBModel.OpcUaAccess.IdentAccess")
 				.parameter("ConfigFileName", configFileName_);
 			return false;
 		}
@@ -127,9 +134,47 @@ namespace OpcUaDB
 	bool
 	OpcUaAccessConfig::decodeIdentAccess(Config& config)
 	{
+		// get ident access element
+		boost::optional<Config> server = config.getChild("Server");
+		if (!server) {
+			Log(Error, "element missing in config file")
+				.parameter("Element", "DBModel.OpcUaAccess.IdentAccess.Server")
+				.parameter("ConfigFileName", configFileName_);
+			return false;
+		}
+
+		// decode server section
 		identAccess_.configFileName(configFileName_);
 		identAccess_.elementPrefix("DBModel.OpcUaAccess.IdentAccess.Server");
-		return identAccess_.decode(config);
+		if (!identAccess_.decode(*server)) {
+			return false;
+		}
+
+		// decode sql query section
+		std::vector<Config> queryVec;
+		config.getChilds("SQLQuerys.SQLQuery", queryVec);
+
+		std::vector<Config>::iterator it;
+		for (it = queryVec.begin(); it != queryVec.end(); it++) {
+			std::string id;
+
+			// get id attribute
+			bool success = it->getConfigParameter("<xmlattr>.Id", id);
+			if (!success) {
+				Log(Error, "attribute missing in config file")
+					.parameter("Element", "DBModel.OpcUaAccess.IdentAccess.SQLQuerys.SQLQuery")
+					.parameter("Attribute", "Id")
+					.parameter("ConfigFileName", configFileName_);
+				return false;
+			}
+
+			// get sql query
+			std::string sqlQuery = it->getValue();
+
+			std::cout << " " << id << " " << sqlQuery << std::endl;
+		}
+
+		return true;
 	}
 
 	bool

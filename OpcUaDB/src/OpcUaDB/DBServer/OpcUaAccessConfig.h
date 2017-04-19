@@ -30,6 +30,7 @@ namespace OpcUaDB
 	{
 	  public:
 		typedef std::vector<std::string> NamespaceUris;
+		typedef std::map<std::string, std::string> SQLQueryMap;
 
 		OpcUaAccessConfig(void);
 		~OpcUaAccessConfig(void);
@@ -38,6 +39,7 @@ namespace OpcUaDB
     	NamespaceUris& namespaceUris(void);
     	OpcUaReferenceConfig& identAccess(void);
     	OpcUaReferenceConfig& sqlAccess(void);
+    	SQLQueryMap& sqlQueryMap(void);
 
 		bool decode(Config& config);
 
@@ -50,6 +52,7 @@ namespace OpcUaDB
 		NamespaceUris namespaceUris_;
     	OpcUaReferenceConfig identAccess_;
     	OpcUaReferenceConfig sqlAccess_;
+    	SQLQueryMap sqlQueryMap_;
 	};
 
 }
