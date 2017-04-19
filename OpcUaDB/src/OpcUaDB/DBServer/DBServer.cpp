@@ -138,7 +138,24 @@ namespace OpcUaDB
 		OpcUaStringArray::SPtr& data
 	)
 	{
-		// FIXME: todo
+		// create header
+		header->resize(resultSet.colDescriptionVec_.size());
+		for (uint32_t idx=0; idx<resultSet.colDescriptionVec_.size(); idx++) {
+			OpcUaString::SPtr headerString = constructSPtr<OpcUaString>();
+			headerString->value((char*)resultSet.colDescriptionVec_[idx].colName_);
+			header->set(idx, headerString);
+		}
+
+		// create data
+		data->resize(resultSet.tableData_.size() * resultSet.colDescriptionVec_.size());
+		for (uint32_t i=0; i<resultSet.tableData_.size(); i++) {
+			for (uint32_t j=0; j<resultSet.colDescriptionVec_.size(); j++) {
+				OpcUaString::SPtr dataString = constructSPtr<OpcUaString>();
+				dataString->value(resultSet.tableData_[i][j]);
+				data->push_back(dataString);
+			}
+		}
+
 		statusCode = "Success";
 		return true;
 	}
