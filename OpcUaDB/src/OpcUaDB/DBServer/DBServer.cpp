@@ -111,7 +111,9 @@ namespace OpcUaDB
 		outputArguments->resize(3);
 		outputArguments->set(0, statusCode);
 		outputArguments->set(1, header);
-		outputArguments->set(2, data);
+		if (data->arrayLength() > 0) {
+			outputArguments->set(2, data);
+		}
 
 		// disconnect to database
 		success = connection.disconnect();
