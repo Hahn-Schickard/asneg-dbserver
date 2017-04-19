@@ -17,9 +17,9 @@
       <Server Service="Call" NodeId="ns=1;s=IdentAccessString"/>
       
       <SQLQuerys>
-        <SQLQuery Id="TestData1">select * from TestData</SQLQuery>
-        <SQLQuery Id="TestData2">select * from TestData where Field1 > %1</SQLQuery>
-        <SQLQuery Id="TestData3">select * from TestData where Field1 > %1 AND Field2 > %2</SQLQuery>
+        <SQLQuery Id="TestData1">select * from "TestData"</SQLQuery>
+        <SQLQuery Id="TestData2">select * from "TestData" where "Feld1" > %1</SQLQuery>
+        <SQLQuery Id="TestData3">select * from "TestData" where "Feld1" > %1 AND "Feld2" > %2</SQLQuery>
       </SQLQuerys>
       
 	</IdentAccess>
