@@ -239,10 +239,10 @@ namespace OpcUaDB
 	DBServer::registerIdentAccessCall(void)
 	{
 	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
-	  	RegisterForwardRequest::SPtr req = trx->request();
-	  	RegisterForwardResponse::SPtr res = trx->response();
+	  	RegisterForwardNodeRequest::SPtr req = trx->request();
+	  	RegisterForwardNodeResponse::SPtr res = trx->response();
 
-        req->forwardInfoSync()->methodService().setCallback(identAccessCallback_);
+        req->forwardCallbackSync()->methodService().setCallback(identAccessCallback_);
 	  	req->nodesToRegister()->resize(1);
 
 	  	OpcUaNodeId::SPtr nodeId = constructSPtr<OpcUaNodeId>();
@@ -286,10 +286,10 @@ namespace OpcUaDB
 	DBServer::registerSQLAccessCall(void)
 	{
 	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
-	  	RegisterForwardRequest::SPtr req = trx->request();
-	  	RegisterForwardResponse::SPtr res = trx->response();
+	  	RegisterForwardNodeRequest::SPtr req = trx->request();
+	  	RegisterForwardNodeResponse::SPtr res = trx->response();
 
-        req->forwardInfoSync()->methodService().setCallback(sqlAccessCallback_);
+        req->forwardCallbackSync()->methodService().setCallback(sqlAccessCallback_);
 	  	req->nodesToRegister()->resize(1);
 
 	  	OpcUaNodeId::SPtr nodeId = constructSPtr<OpcUaNodeId>();
@@ -333,10 +333,10 @@ namespace OpcUaDB
 	DBServer::registerAccessCall(void)
 	{
 	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
-	  	RegisterForwardRequest::SPtr req = trx->request();
-	  	RegisterForwardResponse::SPtr res = trx->response();
+	  	RegisterForwardNodeRequest::SPtr req = trx->request();
+	  	RegisterForwardNodeResponse::SPtr res = trx->response();
 
-        req->forwardInfoSync()->methodService().setCallback(accessCallback_);
+        req->forwardCallbackSync()->methodService().setCallback(accessCallback_);
 	  	req->nodesToRegister()->resize(1);
 
 	  	OpcUaNodeId::SPtr nodeId = constructSPtr<OpcUaNodeId>();
