@@ -17,9 +17,11 @@
 
 #include "OpcUaStackCore/Base/os.h"
 #include "OpcUaStackCore/Base/Log.h"
+#include "OpcUaStackCore/ApplicationUtility/OpcUaCallReference.h"
 #include "OpcUaStackServer/ServiceSetApplication/ApplicationService.h"
 #include "OpcUaDB/DBServer/DBServer.h"
 
+using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
 
 namespace OpcUaDB
@@ -238,26 +240,37 @@ namespace OpcUaDB
 	bool
 	DBServer::registerIdentAccessCall(void)
 	{
-	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
-	  	RegisterForwardNodeRequest::SPtr req = trx->request();
-	  	RegisterForwardNodeResponse::SPtr res = trx->response();
+		NamespaceMap::iterator it;
+		ServiceTransactionRegisterForwardMethod::SPtr trx = constructSPtr<ServiceTransactionRegisterForwardMethod>();
+	  	RegisterForwardMethodRequest::SPtr req = trx->request();
+	  	RegisterForwardMethodResponse::SPtr res = trx->response();
 
-        req->forwardCallbackSync()->methodService().setCallback(identAccessCallback_);
-	  	req->nodesToRegister()->resize(1);
+	  	req->forwardMethodSync()->methodService().setCallback(identAccessCallback_);
+	  	OpcUaCallReference methodRef(&dbModelConfig_->opcUaAccessConfig().identAccess());
 
-	  	OpcUaNodeId::SPtr nodeId = constructSPtr<OpcUaNodeId>();
-	    *nodeId = dbModelConfig_->opcUaAccessConfig().identAccess().nodeId();
-
-  		NamespaceMap::iterator it;
-  		it = namespaceMap_.find(nodeId->namespaceIndex());
+	  	// handle method nodeid
+	  	OpcUaNodeId methodNodeId;
+	  	methodNodeId.copyFrom(methodRef.nodeId());
+  		it = namespaceMap_.find(methodNodeId.namespaceIndex());
   		if (it == namespaceMap_.end()) {
   			Log(Error, "namespace index not exist in opc ua model")
-  				.parameter("NodeId", *nodeId);
+  				.parameter("NodeId", methodNodeId.toString());
   			return false;
   		}
-  		nodeId->namespaceIndex(it->second);
+  		methodNodeId.namespaceIndex(it->second);
+        req->methodNodeId(methodNodeId);
 
-  		req->nodesToRegister()->set(0, nodeId);
+	  	// handle object nodeid
+	  	OpcUaNodeId objectNodeId;
+	  	objectNodeId.copyFrom(methodRef.objectNodeId());
+  		it = namespaceMap_.find(methodNodeId.namespaceIndex());
+  		if (it == namespaceMap_.end()) {
+  			Log(Error, "namespace index not exist in opc ua model")
+  				.parameter("NodeId", objectNodeId.toString());
+  			return false;
+  		}
+  		objectNodeId.namespaceIndex(it->second);
+        req->objectNodeId(objectNodeId);
 
 	  	applicationServiceIf_->sendSync(trx);
 	  	if (trx->statusCode() != Success) {
@@ -266,16 +279,9 @@ namespace OpcUaDB
 	  		return false;
 	  	}
 
-	  	if (res->statusCodeArray()->size() != 1) {
-	  		Log(Error, "register forward result error");
-	  		return false;
-	  	}
-
-  		OpcUaStatusCode statusCode;
-  		res->statusCodeArray()->get(0, statusCode);
-  		if (statusCode != Success) {
+  		if (res->statusCode() != Success) {
 	  		Log(Error, "register forward value error")
-	  		    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(statusCode));
+	  		    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(res->statusCode()));
   			return false;
   		}
 
@@ -285,26 +291,37 @@ namespace OpcUaDB
 	bool
 	DBServer::registerSQLAccessCall(void)
 	{
-	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
-	  	RegisterForwardNodeRequest::SPtr req = trx->request();
-	  	RegisterForwardNodeResponse::SPtr res = trx->response();
+		NamespaceMap::iterator it;
+		ServiceTransactionRegisterForwardMethod::SPtr trx = constructSPtr<ServiceTransactionRegisterForwardMethod>();
+	  	RegisterForwardMethodRequest::SPtr req = trx->request();
+	  	RegisterForwardMethodResponse::SPtr res = trx->response();
 
-        req->forwardCallbackSync()->methodService().setCallback(sqlAccessCallback_);
-	  	req->nodesToRegister()->resize(1);
+	  	req->forwardMethodSync()->methodService().setCallback(sqlAccessCallback_);
+	  	OpcUaCallReference methodRef(&dbModelConfig_->opcUaAccessConfig().sqlAccess());
 
-	  	OpcUaNodeId::SPtr nodeId = constructSPtr<OpcUaNodeId>();
-	    *nodeId = dbModelConfig_->opcUaAccessConfig().sqlAccess().nodeId();
-
-  		NamespaceMap::iterator it;
-  		it = namespaceMap_.find(nodeId->namespaceIndex());
+	  	// handle method nodeid
+	  	OpcUaNodeId methodNodeId;
+	  	methodNodeId.copyFrom(methodRef.nodeId());
+  		it = namespaceMap_.find(methodNodeId.namespaceIndex());
   		if (it == namespaceMap_.end()) {
   			Log(Error, "namespace index not exist in opc ua model")
-  				.parameter("NodeId", *nodeId);
+  				.parameter("NodeId", methodNodeId.toString());
   			return false;
   		}
-  		nodeId->namespaceIndex(it->second);
+  		methodNodeId.namespaceIndex(it->second);
+        req->methodNodeId(methodNodeId);
 
-  		req->nodesToRegister()->set(0, nodeId);
+	  	// handle object nodeid
+	  	OpcUaNodeId objectNodeId;
+	  	objectNodeId.copyFrom(methodRef.objectNodeId());
+  		it = namespaceMap_.find(methodNodeId.namespaceIndex());
+  		if (it == namespaceMap_.end()) {
+  			Log(Error, "namespace index not exist in opc ua model")
+  				.parameter("NodeId", objectNodeId.toString());
+  			return false;
+  		}
+  		objectNodeId.namespaceIndex(it->second);
+        req->objectNodeId(objectNodeId);
 
 	  	applicationServiceIf_->sendSync(trx);
 	  	if (trx->statusCode() != Success) {
@@ -313,16 +330,9 @@ namespace OpcUaDB
 	  		return false;
 	  	}
 
-	  	if (res->statusCodeArray()->size() != 1) {
-	  		Log(Error, "register forward result error");
-	  		return false;
-	  	}
-
-  		OpcUaStatusCode statusCode;
-  		res->statusCodeArray()->get(0, statusCode);
-  		if (statusCode != Success) {
+  		if (res->statusCode() != Success) {
 	  		Log(Error, "register forward value error")
-	  		    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(statusCode));
+	  		    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(res->statusCode()));
   			return false;
   		}
 
@@ -332,10 +342,11 @@ namespace OpcUaDB
 	bool
 	DBServer::registerAccessCall(void)
 	{
-	  	ServiceTransactionRegisterForward::SPtr trx = constructSPtr<ServiceTransactionRegisterForward>();
+	  	ServiceTransactionRegisterForwardNode::SPtr trx = constructSPtr<ServiceTransactionRegisterForwardNode>();
 	  	RegisterForwardNodeRequest::SPtr req = trx->request();
 	  	RegisterForwardNodeResponse::SPtr res = trx->response();
 
+#if 0
         req->forwardCallbackSync()->methodService().setCallback(accessCallback_);
 	  	req->nodesToRegister()->resize(1);
 
@@ -372,6 +383,7 @@ namespace OpcUaDB
 	  		    .parameter("StatusCode", OpcUaStatusCodeMap::shortString(statusCode));
   			return false;
   		}
+#endif
 
     	return true;
 	}
