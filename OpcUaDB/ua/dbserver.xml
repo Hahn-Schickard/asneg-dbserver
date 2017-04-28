@@ -13,7 +13,7 @@
     </Aliases>
     <Extensions>
         <Extension>
-            <ModelInfo Tool="UaModeler" Hash="2N11/FjNYLAGB+u7KprfzA==" Version="1.4.1"/>
+            <ModelInfo Tool="UaModeler" Hash="YWR6EsINXOj/9k2EUNgF3Q==" Version="1.4.1"/>
         </Extension>
     </Extensions>
     <UAObjectType NodeId="ns=1;i=1002" BrowseName="1:DBAccess">
@@ -234,28 +234,36 @@
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
-    <UAObject NodeId="ns=1;s=DBAcess" BrowseName="1:DBAccess">
-        <DisplayName>DBAccess</DisplayName>
+    <UAObject NodeId="ns=1;i=5002" BrowseName="1:DBServer">
+        <DisplayName>DBServer</DisplayName>
         <References>
+            <Reference ReferenceType="Organizes">ns=1;s=DBAccess</Reference>
             <Reference ReferenceType="Organizes" IsForward="false">i=85</Reference>
-            <Reference ReferenceType="HasTypeDefinition">ns=1;i=1002</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=IdentAccessString</Reference>
-            <Reference ReferenceType="HasComponent">ns=1;s=SQLAccessString</Reference>
+            <Reference ReferenceType="HasTypeDefinition">i=61</Reference>
         </References>
     </UAObject>
-    <UAMethod ParentNodeId="ns=1;s=DBAcess" NodeId="ns=1;s=IdentAccessString" BrowseName="1:IdentAccessString" MethodDeclarationId="ns=1;i=7001">
+    <UAObject NodeId="ns=1;s=DBAccess" BrowseName="1:DBAccess">
+        <DisplayName>DBAccess</DisplayName>
+        <References>
+            <Reference ReferenceType="Organizes" IsForward="false">ns=1;i=5002</Reference>
+            <Reference ReferenceType="HasTypeDefinition">ns=1;i=1002</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DBAccess.IdentAccessString</Reference>
+            <Reference ReferenceType="HasComponent">ns=1;s=DBAccess.SQLAccessString</Reference>
+        </References>
+    </UAObject>
+    <UAMethod ParentNodeId="ns=1;s=DBAccess" NodeId="ns=1;s=DBAccess.IdentAccessString" BrowseName="1:IdentAccessString" MethodDeclarationId="ns=1;i=7001">
         <DisplayName>IdentAccessString</DisplayName>
         <References>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DBAcess</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;i=6005</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;i=6006</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DBAccess</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DBAccess.IdentAccessString.InputArguments</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DBAccess.IdentAccessString.OutputArguments</Reference>
         </References>
     </UAMethod>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;s=IdentAccessString" ValueRank="1" NodeId="ns=1;i=6005" ArrayDimensions="2" BrowseName="InputArguments">
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;s=DBAccess.IdentAccessString" ValueRank="1" NodeId="ns=1;s=DBAccess.IdentAccessString.InputArguments" ArrayDimensions="2" BrowseName="InputArguments">
         <DisplayName>InputArguments</DisplayName>
         <References>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DBAccess.IdentAccessString</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=IdentAccessString</Reference>
         </References>
         <Value>
             <uax:ListOfExtensionObject>
@@ -294,11 +302,11 @@
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;s=IdentAccessString" ValueRank="1" NodeId="ns=1;i=6006" ArrayDimensions="3" BrowseName="OutputArguments">
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;s=DBAccess.IdentAccessString" ValueRank="1" NodeId="ns=1;s=DBAccess.IdentAccessString.OutputArguments" ArrayDimensions="3" BrowseName="OutputArguments">
         <DisplayName>OutputArguments</DisplayName>
         <References>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DBAccess.IdentAccessString</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=IdentAccessString</Reference>
         </References>
         <Value>
             <uax:ListOfExtensionObject>
@@ -353,19 +361,19 @@
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
-    <UAMethod ParentNodeId="ns=1;s=DBAcess" NodeId="ns=1;s=SQLAccessString" BrowseName="1:SQLAccessString" MethodDeclarationId="ns=1;i=7002">
+    <UAMethod ParentNodeId="ns=1;s=DBAccess" NodeId="ns=1;s=DBAccess.SQLAccessString" BrowseName="1:SQLAccessString" MethodDeclarationId="ns=1;i=7002">
         <DisplayName>SQLAccessString</DisplayName>
         <References>
-            <Reference ReferenceType="HasProperty">ns=1;i=6007</Reference>
-            <Reference ReferenceType="HasProperty">ns=1;i=6008</Reference>
-            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DBAcess</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DBAccess.SQLAccessString.InputArguments</Reference>
+            <Reference ReferenceType="HasProperty">ns=1;s=DBAccess.SQLAccessString.OutputArguments</Reference>
+            <Reference ReferenceType="HasComponent" IsForward="false">ns=1;s=DBAccess</Reference>
         </References>
     </UAMethod>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;s=SQLAccessString" ValueRank="1" NodeId="ns=1;i=6007" ArrayDimensions="1" BrowseName="InputArguments">
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;s=DBAccess.SQLAccessString" ValueRank="1" NodeId="ns=1;s=DBAccess.SQLAccessString.InputArguments" ArrayDimensions="1" BrowseName="InputArguments">
         <DisplayName>InputArguments</DisplayName>
         <References>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DBAccess.SQLAccessString</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=SQLAccessString</Reference>
         </References>
         <Value>
             <uax:ListOfExtensionObject>
@@ -388,11 +396,11 @@
             </uax:ListOfExtensionObject>
         </Value>
     </UAVariable>
-    <UAVariable DataType="Argument" ParentNodeId="ns=1;s=SQLAccessString" ValueRank="1" NodeId="ns=1;i=6008" ArrayDimensions="3" BrowseName="OutputArguments">
+    <UAVariable DataType="Argument" ParentNodeId="ns=1;s=DBAccess.SQLAccessString" ValueRank="1" NodeId="ns=1;s=DBAccess.SQLAccessString.OutputArguments" ArrayDimensions="3" BrowseName="OutputArguments">
         <DisplayName>OutputArguments</DisplayName>
         <References>
+            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=DBAccess.SQLAccessString</Reference>
             <Reference ReferenceType="HasTypeDefinition">i=68</Reference>
-            <Reference ReferenceType="HasProperty" IsForward="false">ns=1;s=SQLAccessString</Reference>
         </References>
         <Value>
             <uax:ListOfExtensionObject>
