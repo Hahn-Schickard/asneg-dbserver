@@ -14,7 +14,7 @@
 	</NamespaceUris>
 	
 	<IdentAccess>
-      <Server Service="Call" NodeId="ns=1;s=IdentAccessString" ObjectNodeId="ns=1;s=DBAcess"/>
+      <Server Service="Call" NodeId="ns=1;s=DBAccess.IdentAccessString" ObjectNodeId="ns=1;s=DBAccess"/>
       
       <SQLQuerys>
         <SQLQuery Id="TestData1">select * from "TestData"</SQLQuery>
@@ -25,7 +25,7 @@
 	</IdentAccess>
 	
 	<SQLAccess>
-      <Server Service="Call" NodeId="ns=1;s=SQLAccessString" ObjectNodeId="ns=1;s=DBAcess"/>
+      <Server Service="Call" NodeId="ns=1;s=DBAccess.SQLAccessString" ObjectNodeId="ns=1;s=DBAccess"/>
 	</SQLAccess>
 	
   </OpcUaAccess>
