@@ -216,10 +216,10 @@ namespace OpcUaDB
 		    dbc_,
 		    (SQLCHAR*)dnsName_.c_str(),
 		    SQL_NTS,
-		    NULL,
-		    0,
-		    NULL,
-		    0
+		    userName_.empty() ? NULL : (SQLCHAR*)userName_.c_str(),
+		    userName_.empty() ? 0 : SQL_NTS,
+		    password_.empty() ? NULL : (SQLCHAR*)password_.c_str(),
+		    password_.empty() ? 0 : SQL_NTS
 		);
 		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
 			logError("connect - SQLConnect error", SQL_HANDLE_DBC);

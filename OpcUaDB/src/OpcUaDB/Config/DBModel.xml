@@ -5,6 +5,8 @@
   
     <!--<DsnName>PostgreSQL TestData</DsnName>-->
     <DsnName>Test</DsnName>
+    <UserName>TestUser</UserName>
+    <Password>geheim1234@</Password>
 
   </Database>
 
