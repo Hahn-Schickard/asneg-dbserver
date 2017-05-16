@@ -289,7 +289,7 @@ namespace OpcUaDB
 
 		ret = SQLGetData(stmt_, col, SQL_CHAR, buf, sizeof(buf), &length);
 		if (ret == SQL_SUCCESS) {
-			if (buf == NULL) {
+			if ((uint32_t)length == 0xFFFFFFFF) {
 				data = "NULL";
 			}
 			else {
