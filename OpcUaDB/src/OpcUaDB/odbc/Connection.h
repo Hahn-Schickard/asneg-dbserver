@@ -65,8 +65,12 @@ namespace OpcUaDB
 		bool init(void);
 		bool cleanup(void);
 
-		std::string name(void);
-		void name(const std::string& name);
+		std::string& dnsName(void);
+		void dnsName(const std::string& dnsName);
+		std::string& userName(void);
+		void userName(const std::string& userName);
+		std::string& password(void);
+		void password(const std::string& password);
 		ResultSet& resultSet(void);
 
 		bool connect(void);
@@ -80,7 +84,9 @@ namespace OpcUaDB
 		bool describe(ColDescription::Vec& colDescriptionVec);
 		void logError(const std::string& message, uint32_t handle = 0);
 
-		std::string name_;
+		std::string dnsName_;
+		std::string userName_;
+		std::string password_;
 	    SQLHENV env_;
 	    SQLHDBC dbc_;
 	    HSTMT stmt_;

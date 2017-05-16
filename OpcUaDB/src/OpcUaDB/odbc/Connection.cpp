@@ -94,7 +94,9 @@ namespace OpcUaDB
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	Connection::Connection(void)
-	: name_("")
+	: dnsName_("")
+	, userName_("")
+	, password_("")
 	, env_(nullptr)
 	, dbc_(nullptr)
 	, stmt_(nullptr)
@@ -154,16 +156,40 @@ namespace OpcUaDB
 		return true;
 	}
 
-	std::string
-	Connection::name(void)
+	std::string&
+	Connection::dnsName(void)
 	{
-		return name_;
+		return dnsName_;
 	}
 
 	void
-	Connection::name(const std::string& name)
+	Connection::dnsName(const std::string& dnsName)
 	{
-		name_ = name;
+		dnsName_ = dnsName;
+	}
+
+	std::string&
+	Connection::userName(void)
+	{
+		return userName_;
+	}
+
+	void
+	Connection::userName(const std::string& userName)
+	{
+		userName_ = userName;
+	}
+
+	std::string&
+	Connection::password(void)
+	{
+		return password_;
+	}
+
+	void
+	Connection::password(const std::string& password)
+	{
+		password_ = password;
 	}
 
 	ResultSet&
@@ -188,9 +214,12 @@ namespace OpcUaDB
 	    // DBC: Connect
 		ret = SQLConnect(
 		    dbc_,
-		    (SQLCHAR*)name_.c_str(), SQL_NTS,
-		    NULL, 0,
-		    NULL, 0
+		    (SQLCHAR*)dnsName_.c_str(),
+		    SQL_NTS,
+		    NULL,
+		    0,
+		    NULL,
+		    0
 		);
 		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
 			logError("connect - SQLConnect error", SQL_HANDLE_DBC);
