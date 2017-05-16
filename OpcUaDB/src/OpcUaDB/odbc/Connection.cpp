@@ -41,6 +41,26 @@ namespace OpcUaDB
 	{
 	}
 
+	bool
+	ResultSet::isSuccess(void)
+	{
+		if ((ret_ != SQL_SUCCESS) && (ret_ != SQL_SUCCESS_WITH_INFO) && (ret_ != SQL_NO_DATA)) return false;
+		return true;
+	}
+
+	bool
+	ResultSet::isNoData(void)
+	{
+		if (ret_ == SQL_NO_DATA) return true;
+		return false;
+	}
+
+	bool
+	ResultSet::isResultsetEmpty(void)
+	{
+		return tableData_.size() == 0;
+	}
+
 	uint32_t
 	ResultSet::columnNumber(void)
 	{
@@ -241,24 +261,23 @@ namespace OpcUaDB
 	bool
 	Connection::execDirect(const std::string& statement)
 	{
-		SQLRETURN ret;
-
 		// check
 		if (dbc_ == nullptr) {
 			return false;
 		}
 
 		// allocate sql statement handle
-		ret = SQLAllocHandle(SQL_HANDLE_STMT, dbc_, &stmt_);
-		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
+		ret_ = SQLAllocHandle(SQL_HANDLE_STMT, dbc_, &stmt_);
+		if ((ret_ != SQL_SUCCESS) && (ret_ != SQL_SUCCESS_WITH_INFO)) {
 			logError("execDirect - SQLAllocHandle error", SQL_HANDLE_STMT);
 			cleanup();
 			return false;
 		}
 
 		// execute sql satement
-		ret = SQLExecDirect(stmt_, (SQLCHAR*)statement.c_str(), SQL_NTS);
-		if ((ret != SQL_SUCCESS) && (ret != SQL_SUCCESS_WITH_INFO)) {
+		ret_ = SQLExecDirect(stmt_, (SQLCHAR*)statement.c_str(), SQL_NTS);
+		resultSet_.ret_ = ret_;
+		if ((ret_ != SQL_SUCCESS) && (ret_ != SQL_SUCCESS_WITH_INFO)) {
 			logError("execDirect - SQLExecDirect error", SQL_HANDLE_STMT);
 			SQLFreeHandle(SQL_HANDLE_STMT, stmt_);
 			cleanup();

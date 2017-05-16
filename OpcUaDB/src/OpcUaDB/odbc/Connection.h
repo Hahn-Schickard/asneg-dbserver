@@ -47,6 +47,10 @@ namespace OpcUaDB
 		ResultSet(void);
 		~ResultSet(void);
 
+		bool isSuccess(void);
+		bool isNoData(void);
+		bool isResultsetEmpty(void);
+
 		uint32_t columnNumber(void);
 		uint32_t rowNumber(void);
 		bool out(std::ostream& os);
@@ -54,6 +58,8 @@ namespace OpcUaDB
 
 		ColDescription::Vec colDescriptionVec_;
 		TableData tableData_;
+
+		int32_t ret_;
 	};
 
 	class Connection
@@ -84,6 +90,7 @@ namespace OpcUaDB
 		bool describe(ColDescription::Vec& colDescriptionVec);
 		void logError(const std::string& message, uint32_t handle = 0);
 
+		SQLRETURN ret_;
 		std::string dnsName_;
 		std::string userName_;
 		std::string password_;
