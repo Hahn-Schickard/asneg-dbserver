@@ -285,10 +285,16 @@ namespace OpcUaDB
 	{
 		SQLRETURN ret;
 		SQLCHAR buf[255] = {0};
+		SQLLEN length = 0;
 
-		ret = SQLGetData(stmt_, col, SQL_CHAR, buf, sizeof(buf), NULL);
+		ret = SQLGetData(stmt_, col, SQL_CHAR, buf, sizeof(buf), &length);
 		if (ret == SQL_SUCCESS) {
-			data = std::string((char*)buf);
+			if (buf == NULL) {
+				data = "NULL";
+			}
+			else {
+				data = std::string((char*)buf);
+			}
 			return true;
 		}
 		return false;
@@ -304,6 +310,7 @@ namespace OpcUaDB
 
 		// read data from result set
 		resultSet.tableData_.clear();
+		uint32_t row = 1;
 		while (SQLFetch(stmt_) == SQL_SUCCESS) {
 			std::vector<std::string> col;
 			std::string data;
@@ -315,6 +322,7 @@ namespace OpcUaDB
 			}
 
 			resultSet.tableData_.push_back(col);
+			row++;
 		}
 
 		return true;
