@@ -31,14 +31,14 @@ namespace OpcUaDB
 		DatabaseConfig(void);
 		~DatabaseConfig(void);
 
-		std::string name(void);
+		std::string dsnName(void);
 		std::string& userName(void);
 		std::string& password(void);
 
 		bool decode(Config& config);
 
 	  private:
-		std::string name_;
+		std::string dsnName_;
 		std::string userName_;
 		std::string password_;
 	};

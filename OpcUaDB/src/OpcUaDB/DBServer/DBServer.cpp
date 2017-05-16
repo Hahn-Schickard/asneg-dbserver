@@ -81,7 +81,7 @@ namespace OpcUaDB
 		Connection connection;
 
 		// connect to database
-		connection.name(dbModelConfig_->databaseConfig().name());
+		connection.name(dbModelConfig_->databaseConfig().dsnName());
 		success = connection.connect();
 		if (!success) {
 			createResultError("Error - database connection", outputArguments);

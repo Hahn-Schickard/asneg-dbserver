@@ -3,7 +3,8 @@
 
   <Database>
   
-    <Name>PostgreSQL TestData</Name>
+    <!--<DsnName>PostgreSQL TestData</DsnName>-->
+    <DsnName>Test</DsnName>
 
   </Database>
 

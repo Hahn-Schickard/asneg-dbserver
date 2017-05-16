@@ -31,7 +31,7 @@ namespace OpcUaDB
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
 	DatabaseConfig::DatabaseConfig(void)
-	: name_("")
+	: dsnName_("")
 	, userName_("")
 	, password_("")
 	{
@@ -42,9 +42,9 @@ namespace OpcUaDB
 	}
 
 	std::string
-	DatabaseConfig::name(void)
+	DatabaseConfig::dsnName(void)
 	{
-		return name_;
+		return dsnName_;
 	}
 
 	std::string&
@@ -65,7 +65,7 @@ namespace OpcUaDB
 		bool success;
 
 		// get database name
-		success = config.getConfigParameter("Name", name_);
+		success = config.getConfigParameter("DsnName", dsnName_);
 		if (!success) {
 			Log(Error, "element missing in config file")
 				.parameter("Element", "DBModel.Database.Name")
