@@ -32,6 +32,8 @@ namespace OpcUaDB
 	// ------------------------------------------------------------------------
 	DatabaseConfig::DatabaseConfig(void)
 	: name_("")
+	, userName_("")
+	, password_("")
 	{
 	}
 
@@ -43,6 +45,18 @@ namespace OpcUaDB
 	DatabaseConfig::name(void)
 	{
 		return name_;
+	}
+
+	std::string&
+	DatabaseConfig::userName(void)
+	{
+		return userName_;
+	}
+
+	std::string&
+	DatabaseConfig::password(void)
+	{
+		return password_;
 	}
 
 	bool
@@ -58,6 +72,13 @@ namespace OpcUaDB
 				.parameter("ConfigFileName", config.configFileName());
 			return false;
 		}
+
+		// get user name
+		config.getConfigParameter("UserName", userName_, "");
+
+		// get password
+		config.getConfigParameter("Password", password_, "");
+
 
 		return true;
 	}
